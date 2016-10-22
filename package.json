@@ -42,7 +42,8 @@
     "sequelize": "3.24.x",
     "socket.io": "1.5.x",
     "twilio": "2.9.x",
-    "xml2js": "0.4.x"
+    "xml2js": "0.4.x",
+    "uid2": "0.0.x"
   },
   "devDependencies": {
     "chai": "2.1.x",

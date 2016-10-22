@@ -290,8 +290,20 @@ describe 'Teresa', ->
         near:
           lat: 38.6333972
           lng: -90.195599
+      should.exist lat
+      should.exist lng
       parseInt(lat * 1000).should.equal 38643
       parseInt(lng * 1000).should.equal -90257
+      return
+
+    it '#direction', ->
+      yield gb.LocationUtils.direction
+        origin:
+          lat: 38.6440
+          lng: -90.2574
+        destination:
+          lat: 38.633397
+          lng: -90.19559
       return
 
   describe 'Shelter', ->

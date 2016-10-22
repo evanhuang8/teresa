@@ -56,8 +56,17 @@ module.exports = (sequelize, DataTypes) ->
       ShelterService.belongsTo models.Organization,
         as: 'organization'
       return
-    instanceMethod: 
-      isOpen: () ->
-        return
+    classMethod: 
+      isOpen: (businessHours, tz) ->
+        now = moment.tz
+        day = now.day()
+        interval = businessHours[day]
+        if interval.always
+          return true
+        start = moment interval.start, 'hh:mmA'
+        end = moment interval.end, 'hh:mmA'
+        if interval.overnight
+          end.add 1, 'day'
+        return start < now and now < end
 
   return ShelterService
