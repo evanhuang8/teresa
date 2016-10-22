@@ -5,6 +5,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-concurrent'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-concat'
+  grunt.loadNpmTasks 'grunt-contrib-sass'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-env'
   grunt.loadNpmTasks 'grunt-mocha-test'
@@ -56,6 +57,21 @@ module.exports = (grunt) ->
           'static/js/components.js': [
             'views/jsx/components/**/*.cpt'
           ]
+    sass:
+      vendor:
+        options:
+          cacheLocation: '/tmp/.sass-cache'
+          style: 'compressed'
+          compass: true
+        files:
+          'static/css/vendor.css': 'views/css/vendor.scss'
+      site:
+        options:
+          cacheLocation: '/tmp/.sass-cache'
+          style: 'compressed'
+          compass: true
+        files:
+          'static/css/teresa.css': 'views/css/teresa.scss'
     shell:
       options:
         execOptions:
@@ -88,6 +104,18 @@ module.exports = (grunt) ->
           'views/jsx/components/**/*.cpt'
         ]
         tasks: ['cjsx:components']
+      sass_vendor:
+        options:
+          nospawn: true
+        files: [
+          'views/css/vendor.scss'
+        ]
+        tasks: ['sass:vendor']
+      sass_site:
+        options:
+          nospawn: true
+        files: ['views/css/**/*.scss', '!views/css/vendor.scss']
+        tasks: ['sass:site']
     concurrent:
       dev:
         tasks: [
@@ -109,7 +137,7 @@ module.exports = (grunt) ->
           'tests/**/*.coffee'
         ]
 
-  grunt.registerTask 'compile', ['bower_concat', 'cjsx']
+  grunt.registerTask 'compile', ['bower_concat', 'sass', 'cjsx']
   grunt.registerTask 'dev', ['compile', 'env:dev', 'concurrent:dev']
   grunt.registerTask 'test', ['env:test', 'mochaTest']
 
