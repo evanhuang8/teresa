@@ -6,6 +6,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-concat'
   grunt.loadNpmTasks 'grunt-contrib-watch'
+  grunt.loadNpmTasks 'grunt-mocha-test'
   grunt.loadNpmTasks 'grunt-newer'
   grunt.loadNpmTasks 'grunt-shell'
 
@@ -54,8 +55,20 @@ module.exports = (grunt) ->
         options:
           limit: 10
           logConcurrentOutput: true
+    mochaTest:
+      test:
+        options:
+          reporter: 'spec'
+          require: [
+            'coffee-script/register'
+          ]
+          bail: grunt.option('bail')?
+        src: [
+          'tests/**/*.coffee'
+        ]
 
   grunt.registerTask 'compile', ['cjsx']
   grunt.registerTask 'dev', ['compile', 'concurrent:dev']
+  grunt.registerTask 'test', ['mochaTest']
 
   return
