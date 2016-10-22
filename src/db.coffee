@@ -23,6 +23,7 @@ models =
   User: importTable 'user'
   Referral: importTable 'referral'
   ShelterService: importTable 'shelter'
+  ShelterIntent: importTable 'intent'
 
 # Association
 for name, model of models
