@@ -24,7 +24,7 @@ module.exports = () ->
   # Index endpoint/Controller index
   urls.all '/:endpoint/', (next) ->
     if controllers.index[@params.endpoint]?
-      yield controllers.index[@params.endpoint].apply this, [next]
+      yield controllers.index[@params.endpoint].call this
       return
     else if controllers[@params.endpoint]? and controllers[@params.endpoint].index?
       yield controllers[@params.endpoint].index.apply this, [next]

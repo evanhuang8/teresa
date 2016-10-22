@@ -7,7 +7,7 @@ path = require 'path'
 co = require 'co'
 koa = require 'koa'
 formidable = require 'koa-formidable'
-jade = require 'koa-jade'
+pug = require 'koa-pug'
 logger = require 'koa-logger'
 mount = require 'koa-mount'
 serve = require 'koa-static'
@@ -79,7 +79,7 @@ module.exports = class Teresa
 
     @app.use mount '/static/', serve path.join __dirname, '../static/'
 
-    _jade = new jade
+    new pug
       viewPath: path.join __dirname, '../views/templates/'
       debug: true
       noCache: true
@@ -89,7 +89,7 @@ module.exports = class Teresa
         _: require 'lodash'
         moment: require 'moment-timezone'
       ]
-    @app.use _jade.middleware
+      app: @app
 
     router = urls()
     @app.use router.routes()
