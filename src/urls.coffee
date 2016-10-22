@@ -11,6 +11,10 @@ module.exports = () ->
   controllers = 
 
     index: require './controllers/index'
+    user: require './controllers/user'
+    community: require './controllers/community'
+    organization: require './controllers/organization'
+    client: require './controllers/client'
 
   # Index
   urls.all '/', controllers.index.index
