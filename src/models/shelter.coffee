@@ -26,14 +26,16 @@ module.exports = (sequelize, DataTypes) ->
           if not interval.always
             start = moment interval.start, 'hh:mmA', true
             end = moment interval.end, 'hh:mmA', false
+            if interval.overnight
+              end.add 1, 'day'
             if not start.isValid() or not end.isValid() or start > end
               throw new Error 'Invalid business hour intervals!'
-        @setDataValues 'businessHours', JSON.stringify intervals
+        @setDataValue 'businessHours', JSON.stringify intervals
         return
       get: () ->
         intervals = []
         try
-          intervals = JSON.parse @getDataValues 'businessHours'
+          intervals = JSON.parse @getDataValue 'businessHours'
         catch err
           intervals = []
         return intervals
@@ -42,7 +44,7 @@ module.exports = (sequelize, DataTypes) ->
       allowNull: false
       validate:
         min: 0
-    currentCapacity:
+    openCapacity:
       type: DataTypes.INTEGER
       allowNull: false
       validate:
@@ -54,5 +56,8 @@ module.exports = (sequelize, DataTypes) ->
       ShelterService.belongsTo models.Organization,
         as: 'organization'
       return
+    instanceMethod: 
+      isOpen: () ->
+        return
 
   return ShelterService

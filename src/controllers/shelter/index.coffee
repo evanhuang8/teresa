@@ -1,8 +1,8 @@
-db = require '../db'
+db = require '../../db'
 Organization = db.model 'Organization'
 ShelterService = db.model 'ShelterService'
 
-CURD = require '../utils/curd'
+CURD = require '../../utils/curd'
 
 module.exports = 
 
@@ -17,8 +17,21 @@ module.exports =
       description: params.description
       businessHours: params.businessHours
       maxCapacity: params.maxCapacity
+      openCapacity: params.openCapacity
+      organizationId: params.organizationId
+    @status = 201
+    @body = 
+      status: 'OK'
+      obj: service
     return
 
   edit: () ->
-
+    fields = [
+      'name'
+      'description'
+      'businessHours'
+      'maxCapacity'
+      'openCapacity'
+    ]
+    yield CURD.update.call this, ShelterService, fields
     return
