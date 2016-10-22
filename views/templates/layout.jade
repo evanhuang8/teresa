@@ -3,10 +3,37 @@ html(lang="en")
   head
     title Teresa HIMS
     meta(name="viewport", content="width=device-width, initial-scale=1, shrink-to-fit=no")
-    //-link(rel="stylesheet", href="#{staticPrefix}css/vendor.css")
+    link(rel="stylesheet", href="#{staticPrefix}css/vendor.css")
     link(rel="stylesheet", href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css")
+    link(rel="stylesheet", href="#{staticPrefix}css/teresa.css")
   body
     block body
+      div#wrapper-top
+        nav.navbar.navbar-full.navbar-dark.bg-primary
+          a.navbar-brand(href="/")
+            | Teresa
+          div.nav.navbar-nav.pull-right
+              //-span.nav-item.dropdown
+                a.nav-link.dropdown-toggle(href="#", data-toggle="dropdown")
+                  span.fa.fa-gears
+                  |  Analytics
+                div.dropdown-menu
+                  a.dropdown-item(href="/analytics")
+                    span.fa.fa-pie-chart 
+                    |  Overview
+                  a.dropdown-item(href="/analytics/engagement")
+                    span.fa.fa-line-chart
+                    |  Engagement
+                  a.dropdown-item(href="/analytics/risks")
+                    span.fa.fa-cubes
+                    |  Risks/Triage
+              //-a.nav-item.nav-link(href="/data") 
+                span.fa.fa-tasks
+                |  Data
     div#scripts
+      script(src="#{staticPrefix}js/libraries.js")
+      script(src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js", crossorigin="anonymous")
+      script(src="#{staticPrefix}js/teresa.js")
       block scripts
-        
+        script.
+          Teresa.init()

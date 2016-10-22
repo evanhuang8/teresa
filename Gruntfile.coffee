@@ -5,6 +5,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-concurrent'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-concat'
+  grunt.loadNpmTasks 'grunt-contrib-sass'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-env'
   grunt.loadNpmTasks 'grunt-mocha-test'
@@ -22,6 +23,12 @@ module.exports = (grunt) ->
     env:
       options:
         GOOGLE_API_KEY: credentials.GOOGLE_API_KEY
+        WIT_AI_ID: credentials.WIT_AI_ID
+        WIT_AI_TOKEN: credentials.WIT_AI_TOKEN
+      dev:
+        T_TEST: 0
+      test:
+        T_TEST: 1
     coffee:
       compile:
         files: [
@@ -31,6 +38,9 @@ module.exports = (grunt) ->
           dest: '.app'
           ext: '.js'
         ]
+    bower_concat:
+      libraries:
+        dest: 'static/js/libraries.js'
     cjsx: 
       compile:
         files: [
@@ -47,6 +57,21 @@ module.exports = (grunt) ->
           'static/js/components.js': [
             'views/jsx/components/**/*.cpt'
           ]
+    sass:
+      vendor:
+        options:
+          cacheLocation: '/tmp/.sass-cache'
+          style: 'compressed'
+          compass: true
+        files:
+          'static/css/vendor.css': 'views/css/vendor.scss'
+      site:
+        options:
+          cacheLocation: '/tmp/.sass-cache'
+          style: 'compressed'
+          compass: true
+        files:
+          'static/css/teresa.css': 'views/css/teresa.scss'
     shell:
       options:
         execOptions:
@@ -56,11 +81,46 @@ module.exports = (grunt) ->
           stdout: true
           stderr: true
         command: 'nodemon --watch src src/runner.coffee'
+    watch:
+      reload:
+        options:
+          livereload: true
+        files: [
+          'views/templates/**/*'
+          'views/jsx/**/*'
+        ]
+        tasks: []
+      cjsx: 
+        options:
+          nospawn: true
+        files: [
+          'views/jsx/**/*.cjsx'
+        ]
+        tasks: ['newer:cjsx:compile']
+      components:
+        options:
+          nospawn: true
+        files: [
+          'views/jsx/components/**/*.cpt'
+        ]
+        tasks: ['cjsx:components']
+      sass_vendor:
+        options:
+          nospawn: true
+        files: [
+          'views/css/vendor.scss'
+        ]
+        tasks: ['sass:vendor']
+      sass_site:
+        options:
+          nospawn: true
+        files: ['views/css/**/*.scss', '!views/css/vendor.scss']
+        tasks: ['sass:site']
     concurrent:
       dev:
         tasks: [
           'shell:server'
-          #'watch'
+          'watch'
         ]
         options:
           limit: 10
@@ -77,8 +137,8 @@ module.exports = (grunt) ->
           'tests/**/*.coffee'
         ]
 
-  grunt.registerTask 'compile', ['cjsx']
-  grunt.registerTask 'dev', ['compile', 'env', 'concurrent:dev']
-  grunt.registerTask 'test', ['env', 'mochaTest']
+  grunt.registerTask 'compile', ['bower_concat', 'sass', 'cjsx']
+  grunt.registerTask 'dev', ['compile', 'env:dev', 'concurrent:dev']
+  grunt.registerTask 'test', ['env:test', 'mochaTest']
 
   return
