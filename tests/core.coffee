@@ -122,11 +122,27 @@ describe 'Teresa', ->
 
       before ->
         gb.Organization = gb.db.model 'Organization'
+        orgA = yield gb.Organization.create
+          name: 'St. Patrick Center'
+          description: 'We do good things.'
+          communityId: gb.community.id
+          address: '80 N Tucker Blvd, St. Louis, MO 63101'
+          lat: 38.633397
+          lng: -90.19559
+          tz: 'US/Central'
+        orgB = yield gb.Organization.create
+          name: 'Mercy Ministries'
+          description: 'We do good things.'
+          communityId: gb.community.id
+          address: '655 Maryville Centre Dr, St. Louis, MO 63141'
+          lat: 38.644379
+          lng: -90.495485
+          tz: 'US/Central'
         return
 
       it '#create', ->
         params =
-          name: 'St. Patrick'
+          name: 'Maryville Group'
           description: 'We do good things.'
           communityId: gb.community.id
           address: '80 N Tucker Blvd, St. Louis, MO 63101'
@@ -218,7 +234,23 @@ describe 'Teresa', ->
         gb.client = client
         return
 
-    describe 'Shelter', ->
+  describe 'Location', ->
+
+    before ->
+      gb.LocationUtils = require '../src/utils/location'
+      return
+
+    it '#geocode', ->
+      [lat, lng] = yield gb.LocationUtils.geocode
+        keyword: 'maryland and taylor'
+        near:
+          lat: 38.6333972
+          lng: -90.195599
+      parseInt(lat * 1000).should.equal 38643
+      parseInt(lng * 1000).should.equal -90257
+      return
+
+  describe 'Shelter', ->
 
       before ->
         gb.ShelterService = gb.db.model 'ShelterService'
@@ -280,21 +312,9 @@ describe 'Teresa', ->
         gb.shelter = shelter
         return
 
-  describe 'Location', ->
+      it 'should return nearest open shelter', ->
 
-    before ->
-      gb.LocationUtils = require '../src/utils/location'
-      return
-
-    it '#geocode', ->
-      [lat, lng] = yield gb.LocationUtils.geocode
-        keyword: 'maryland and taylor'
-        near:
-          lat: 38.6333972
-          lng: -90.195599
-      parseInt(lat * 1000).should.equal 38643
-      parseInt(lng * 1000).should.equal -90257
-      return
+        return
 
   after ->
 
