@@ -26,6 +26,9 @@ module.exports = (sequelize, DataTypes) ->
       validate:
         min: -180
         max: 180
+    tz: 
+      type: DataTypes.STRING
+      allowNull: false
   ,
     timestamps: true
     paranoid: true

@@ -1,5 +1,6 @@
-db = require '../db'
-Client = db.model 'Client'
+db = require '../../db'
+Organization = db.model 'Organization'
+ShelterService = db.model 'ShelterService'
 
 CURD = require '../utils/curd'
 

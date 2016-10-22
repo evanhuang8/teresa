@@ -134,6 +134,7 @@ describe 'Teresa', ->
           address: '80 N Tucker Blvd, St. Louis, MO 63101'
           lat: 38.633397
           lng: -90.19559
+          tz: 'US/Pacific'
         res = yield authedRequest
           .post '/organization/create/'
           .send params
@@ -156,6 +157,7 @@ describe 'Teresa', ->
           address: '800 N Tucker Blvd, St. Louis, MO 63101'
           lat: 38.6333972
           lng: -90.195599
+          tz: 'US/Central'
         res = yield authedRequest
           .post '/organization/edit/'
           .send params
@@ -245,6 +247,84 @@ describe 'Teresa', ->
         # res = yield parseXML res.text
         # console.log res
         return
+
+    describe 'Shelter', ->
+
+      before ->
+        gb.ShelterService = gb.db.model 'ShelterService'
+        return
+
+      it '#create', ->
+        hours = []
+        for i in [0...7]
+          hours.push
+            always: true
+        params = 
+          name: 'St. Paddy Shelters'
+          description: 'Welcome to my house - Flo.Rider'
+          businessHours: hours
+          maxCapacity: 190
+          openCapacity: 100
+          organizationId: gb.organization.id
+        res = yield authedRequest
+          .post '/shelter/create/'
+          .send params
+          .expect 201
+          .end()
+        res.body.status.should.equal 'OK'
+        shelter = yield gb.ShelterService.findById res.body.obj.id
+        should.exist shelter
+        for key, val of params
+          shelter[key].should.deep.equal val
+        gb.shelter = shelter
+        return
+
+      it '#edit', ->
+        hours = []
+        for i in [0...7]
+          if i in [2, 4]
+            hours.push
+              start: '05:00PM'
+              end: '9:00AM'
+              overnight: true
+          else
+            hours.push
+              always: true
+        params = 
+          id: gb.shelter.id
+          name: 'St. Patrick Shelters'
+          description: 'Welcome to my house'
+          businessHours: hours
+          maxCapacity: 200
+          openCapacity: 200
+        res = yield authedRequest
+          .post '/shelter/edit/'
+          .send params
+          .expect 200
+          .end()
+        res.body.status.should.equal 'OK'
+        shelter = yield gb.ShelterService.findById res.body.obj.id
+        should.exist shelter
+        for key, val of params
+          shelter[key].should.deep.equal val
+        gb.shelter = shelter
+        return
+
+  describe 'Location', ->
+
+    before ->
+      gb.LocationUtils = require '../src/utils/location'
+      return
+
+    it '#geocode', ->
+      [lat, lng] = yield gb.LocationUtils.geocode
+        keyword: 'maryland and taylor'
+        near:
+          lat: 38.6333972
+          lng: -90.195599
+      parseInt(lat * 1000).should.equal 38643
+      parseInt(lng * 1000).should.equal -90257
+      return
 
   after ->
 
