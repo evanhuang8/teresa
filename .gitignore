@@ -1,3 +1,6 @@
+# Local Drop DB Config
+dropdb.sh
+
 # Logs
 logs
 *.log
