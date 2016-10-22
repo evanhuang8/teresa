@@ -22,7 +22,7 @@ module.exports =
     lng = _res.results[0].geometry.location.lng
     return [lat, lng]
 
-  direction: (opts) ->
+  directions: (opts) ->
     origin = opts.origin
     destination = opts.destination
     url = 'https://maps.googleapis.com/maps/api/directions/json?'
@@ -38,4 +38,14 @@ module.exports =
     if _res.routes.length is 0
       return
     route = _res.routes[0]
-    return
+    steps = []
+    duration = 0
+    for leg, i in route.legs
+      duration += leg.duration.value
+      instruction = decodeURIComponent(leg.html_instructions).replace /<(?:.|\n)*?>/gm, ''
+      step = "#{i + 1}) In #{leg.distance.text}, #{instruction}"
+      steps.push step
+    result = 
+      steps: steps
+      duration: duration # seconds
+    return result

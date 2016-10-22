@@ -1,10 +1,14 @@
 co = require 'co'
+moment = require 'moment-timezone'
 sequelize = require 'sequelize'
+uid = require 'uid2'
 
 db = require '../../db'
 client = db.client
 ShelterService = db.model 'ShelterService'
 ShelterIntent = db.model 'ShelterIntent'
+
+LocationUtils = require '../../utils/location'
 
 module.exports = 
 
@@ -44,16 +48,23 @@ module.exports =
   reserve: (opts) ->
     shelter = opts.shelter
     if shelter.openCapacity <= 0
-      return
+      return [null, null]
     origin = opts.origin
     destination = opts.destination
     intent = null
+    directions = null
     yield db.client.transaction (t) =>
       return co () =>
         yield shelter.decrement 'openCapacity', 
           transaction: t
-        expiresAt = moment().add 30, 'minutes'
+        directions = yield LocationUtils.directions
+          origin: origin
+          destination: destination
+        expiresAt = moment().add 1, 'hour'
+        if directions?
+          expiresAt = moment().add directions.duration, 'seconds'
         intent = yield ShelterIntent.create
           expiresAt: new Date expiresAt.valueOf()
+          code: uid 6
         return
-    return intent
+    return [intent, directions]
