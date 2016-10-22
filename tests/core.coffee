@@ -39,6 +39,11 @@ describe 'Teresa', ->
       should.exist gb.Server
       return
 
+    it 'should start', ->
+      gb.server = new gb.Server()
+      gb.app = yield gb.server.init()
+      return  
+
   after ->
 
     return
