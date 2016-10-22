@@ -11,8 +11,6 @@ supertest = require 'co-supertest'
 request = supertest.agent
 moment = require 'moment-timezone'
 Q = require 'q'
-xml2js = require 'xml2js'
-parseXML = Q.denodeify xml2js.parseString
 
 describe 'Teresa', ->
 

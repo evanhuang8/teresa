@@ -16,7 +16,6 @@ module.exports = (grunt) ->
     credentials = grunt.file.readJSON 'credentials.json'
   catch err
     true
-  console.log credentials
 
   grunt.initConfig
     pkg: grunt.file.readJSON 'package.json'
@@ -25,6 +24,10 @@ module.exports = (grunt) ->
         GOOGLE_API_KEY: credentials.GOOGLE_API_KEY
         WIT_AI_ID: credentials.WIT_AI_ID
         WIT_AI_TOKEN: credentials.WIT_AI_TOKEN
+      dev:
+        T_TEST: 0
+      test:
+        T_TEST: 1
     coffee:
       compile:
         files: [
@@ -81,7 +84,7 @@ module.exports = (grunt) ->
         ]
 
   grunt.registerTask 'compile', ['cjsx']
-  grunt.registerTask 'dev', ['compile', 'env', 'concurrent:dev']
-  grunt.registerTask 'test', ['env', 'mochaTest']
+  grunt.registerTask 'dev', ['compile', 'env:dev', 'concurrent:dev']
+  grunt.registerTask 'test', ['env:test', 'mochaTest']
 
   return
