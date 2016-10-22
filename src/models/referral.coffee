@@ -12,10 +12,14 @@ module.exports = (sequelize, DataTypes) ->
       type: DataTypes.BOOLEAN
       defaultValue: false
     checkupStatus: DataTypes.INTEGER
-    type: DataTypes.INTEGER
+    type: DataTypes.STRING
+    serviceId: DataTypes.INTEGER # key
     address: DataTypes.STRING
     lat: DataTypes.DOUBLE
     lng: DataTypes.DOUBLE
+    isReserved:
+      type: DataTypes.BOOLEAN
+      defaultValue: false
     isConfirmed:
       type: DataTypes.BOOLEAN
       defaultValue: false

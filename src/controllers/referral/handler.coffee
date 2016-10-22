@@ -8,10 +8,21 @@ Client = db.model 'Client'
 Organization = db.model 'Organization'
 MessageHandler = require '../../handlers/message'
 
+locationUtils = require '../../utils/location'
+shelterUtils = require '../../controllers/shelter/utils'
 
+INTENT_TYPES = ['shelter', 'housing', 'health', 'finances']
 
 notCheckup = (referral) ->
   return not referral.isCheckup or referral.checkupStatus?
+
+findAndSelectShelter = (referral) ->
+  nearShelters = yield shelterUtils.nearestShelters
+    lat: referral.lat
+    lng: referral.lng
+    isAvailable: true
+  console.log nearShelters
+  return
 
 module.exports = 
 
@@ -68,8 +79,16 @@ module.exports =
         message = 'Do you need help with anything today?\n\n1: Shelter\n2: Health\n3: Housing\n4: Job/Money\n5: Talk to someone\nPlease reply 1, 2, 3, 4 or 5'
       else if referral.type? and not referral.address?
         message = 'Where are you right now? Please reply with a street address or an intersection (ex: Main Street and North Ave.)'
-      else if referral.type? and referral.address?
-        message = 'Send Directions'
+      else if referral.type? and referral.address? and referral.lat? and referral.lng?
+        shelter = yield findAndSelectShelter referral
+        directions = yield locationUtils.directions
+          origin:
+            lat: referral.lat
+            lng: referral.lng
+          destination:
+            lat: shelter.lat
+            lng: shelter.lng
+        message = test
       handler.reply message 
       referral.isInitialized = true
       yield referral.save()
@@ -116,7 +135,13 @@ module.exports =
       if parseInt(body) not in values
         handler.reply 'Sorry, we didn\'t get that. If you are doing OK, reply 1. If you are worried about loosing you home, reply 2. If you lost your home, reply 3.'
         return
-      referral.type = parseInt(body)
+      referralTypes =
+        1: 'shelter'
+        2: 'housing'
+        3: 'health'
+        4: 'finances'
+        5: 'other'
+      referral.type = referralTypes[parseInt(body)]
       yield referral.save()
       handler.reply 'Where are you right now? Please reply with a street address or an intersection (ex: Main Street and North Ave.)'
       return
@@ -126,9 +151,20 @@ module.exports =
       referral = handler.data.referral
       return notCheckup(referral) and referral.type? and not referral.address?
     , (handler, body) ->
-
-      handler.reply 'Location Response'
-      yield
+      referral = handler.data.referral
+      if not body? or body.trim() is ''
+        handler.reply 'Please send your location.'
+        return
+      result = yield locationUtils.geocode
+        keyword: body
+      if not (result? and result.lat? and result.lng?)
+        handler.reply 'Sorry, we couldn\'t find your location. Please enter an intersection near you (example: \'Washington Ave. and McPherson Ave.\')'
+        return
+      referral.address = result.address
+      referral.lat = result.lat
+      referral.lng = result.lng
+      yield referral.save()
+      shelter = yield findAndSelectShelter referral
       return
 
     # Has type and location
@@ -136,7 +172,7 @@ module.exports =
       referral = handler.data.referral
       return notCheckup(referral) and referral.type? and referral.address?
     , (handler, body) ->
-      handler.reply 'Resend Directions'
+      handler.reply 'Ask for reservation'
       yield
       return
 

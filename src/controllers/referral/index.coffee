@@ -7,6 +7,8 @@ MessageHandler = require('./handler').getMessageHandler()
 interpreter = require '../../utils/interpreter'
 locationUtils = require '../../utils/location'
 
+INTENT_TYPES = ['shelter', 'housing', 'health', 'finances']
+
 findOrCreateReferral = (client, body) ->
   referral = yield Referral.findOne
     where:
@@ -28,12 +30,8 @@ createReferral = (client, body) ->
   if not client?
     throw new Error 'Must include a client'
   result = yield interpreter.interpret body
-  if result.intent?
-    type = switch result.intent
-      when 'shelter' then 1
-      when 'housing' then 2
-      when 'health' then 3
-      when 'finances' then 4
+  if result.intent? and result.intent in INTENT_TYPES
+    type = result.intent
   if result.location?
     data = yield locationUtils.geocode
       keyword: result.location
