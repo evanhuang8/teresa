@@ -250,6 +250,34 @@ describe 'Teresa', ->
         gb.client = client
         return
 
+  describe 'Handlers', ->
+
+    describe 'Interpreter', ->
+
+      before ->
+        gb.interpreter = require '../src/utils/interpreter'
+        return
+
+      it 'should interpret string', ->
+        result = yield gb.interpreter.interpret 'I want to find a place to sleep near University City'
+        result.intent.should.equal 'shelter'
+        result.location.should.equal 'University City'
+        return
+
+    describe 'Incoming Message', ->
+
+      it 'create referral from generic string', ->
+        res = yield request(gb.app)
+          .post '/referral/message/'
+          .send
+            From: '6613177375'
+            Body: 'I need a bed in Ladue'
+          .expect 200
+          .end()
+        # res = yield parseXML res.text
+        # console.log res
+        return
+
   describe 'Location', ->
 
     before ->
