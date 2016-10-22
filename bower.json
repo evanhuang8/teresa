@@ -1,0 +1,27 @@
+{
+  "name": "teresa",
+  "description": "A HIMS platform.",
+  "main": "index.js",
+  "authors": [
+    "Evan Huang <evanhuang8@gmail.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "HIMS"
+  ],
+  "homepage": "https://github.com/evanhuang8/teresa",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "classnames": "2.2.3",
+    "jquery": "2.2.x",
+    "react": "0.13.x",
+    "tether": "1.1.x"
+  }
+}

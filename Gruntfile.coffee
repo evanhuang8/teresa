@@ -37,6 +37,9 @@ module.exports = (grunt) ->
           dest: '.app'
           ext: '.js'
         ]
+    bower_concat:
+      libraries:
+        dest: 'static/js/libraries.js'
     cjsx: 
       compile:
         files: [
@@ -62,11 +65,34 @@ module.exports = (grunt) ->
           stdout: true
           stderr: true
         command: 'nodemon --watch src src/runner.coffee'
+    watch:
+      reload:
+        options:
+          livereload: true
+        files: [
+          'views/templates/**/*'
+          'views/jsx/**/*'
+        ]
+        tasks: []
+      cjsx: 
+        options:
+          nospawn: true
+        files: [
+          'views/jsx/**/*.cjsx'
+        ]
+        tasks: ['newer:cjsx:compile']
+      components:
+        options:
+          nospawn: true
+        files: [
+          'views/jsx/components/**/*.cpt'
+        ]
+        tasks: ['cjsx:components']
     concurrent:
       dev:
         tasks: [
           'shell:server'
-          #'watch'
+          'watch'
         ]
         options:
           limit: 10
@@ -83,7 +109,7 @@ module.exports = (grunt) ->
           'tests/**/*.coffee'
         ]
 
-  grunt.registerTask 'compile', ['cjsx']
+  grunt.registerTask 'compile', ['bower_concat', 'cjsx']
   grunt.registerTask 'dev', ['compile', 'env:dev', 'concurrent:dev']
   grunt.registerTask 'test', ['env:test', 'mochaTest']
 

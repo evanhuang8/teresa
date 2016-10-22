@@ -356,7 +356,7 @@ describe 'Teresa', ->
       return
 
     it '#direction', ->
-      yield gb.LocationUtils.direction
+      yield gb.LocationUtils.directions
         origin:
           lat: 38.6440
           lng: -90.2574
@@ -452,7 +452,7 @@ describe 'Teresa', ->
       gb.shelter = shelter
       return
 
-    it 'should return nearest open shelter', ->
+    it 'should be able to return nearest open shelter', ->
       hours = []
       for i in [0...7]
         hours.push
@@ -494,7 +494,7 @@ describe 'Teresa', ->
       gb.shelters = [shelterA, shelterB, shelterC]
       return
 
-    it 'should return the nearest shelter', ->
+    it 'should be able to return the nearest shelter', ->
       result = yield gb.LocationUtils.geocode
         keyword: 'maryland and taylor'
         near:
@@ -504,6 +504,36 @@ describe 'Teresa', ->
         lat: result.lat
         lng: result.lng
       shelters[0].id.should.equal gb.shelters[2].id
+      return
+
+    it 'should be able to reserve a shelter', ->
+      result = yield gb.LocationUtils.geocode
+        keyword: 'maryland and taylor'
+        near:
+          lat: 38.6333972
+          lng: -90.195599
+      origin = 
+        lat: result.lat
+        lng: result.lng
+      shelter = yield gb.ShelterService.findOne
+        include: [
+          model: gb.Organization
+          as: 'organization'
+        ] 
+        where:
+          id: gb.shelters[0].id
+      destination =
+        lat: shelter.organization.lat
+        lng: shelter.organization.lng
+      [intent, directions] = yield gb.ShelterUtils.reserve
+        shelter: shelter
+        origin: origin
+        destination: destination
+      should.exist intent
+      should.exist directions
+      capacity = shelter.openCapacity
+      shelter = yield gb.ShelterService.findById shelter.id
+      shelter.openCapacity.should.equal capacity - 1
       return
 
   after ->

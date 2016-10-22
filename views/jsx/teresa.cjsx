@@ -1,0 +1,4 @@
+@Teresa = 
+
+  init: () ->
+    return
