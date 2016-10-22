@@ -4,7 +4,7 @@ sequelize = require 'sequelize'
 
 T_DB_HOST = process.env.T_DB_HOST or 'localhost'
 T_DB_USER = process.env.T_DB_USER or 'root'
-T_DB_PASS = process.env.T_DB_PASS or '1tism0db'
+T_DB_PASS = process.env.T_DB_PASS or 'root'
 T_DB_NAME = process.env.T_DB_NAME or 'Teresa'
 
 client = new sequelize T_DB_NAME, T_DB_USER, T_DB_PASS, 

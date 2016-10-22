@@ -1,6 +1,3 @@
-# Local DB Configurations
-src/db.coffee
-
 # Logs
 logs
 *.log
