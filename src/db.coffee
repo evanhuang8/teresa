@@ -20,7 +20,8 @@ models =
   Client: importTable 'client'
   Community: importTable 'community'
   Organization: importTable 'Organization'
-  User: importTable 'user'  
+  User: importTable 'user'
+  ShelterService: importTable 'shelter'
 
 # Association
 for name, model of models

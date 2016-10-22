@@ -49,7 +49,6 @@ module.exports = class Teresa
       return
 
     passport.deserializeUser (id, cb) ->
-      console.log 'wut'
       User.findById(id).then (user) ->
         cb null, user
         return
@@ -67,7 +66,6 @@ module.exports = class Teresa
           user = yield User.findOne
             where:
               email: email
-          console.log 'wuuw'
           result = yield user.verifyPassword password
           return null if not result
           return user

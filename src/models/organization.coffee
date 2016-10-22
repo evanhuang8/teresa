@@ -11,11 +11,23 @@ module.exports = (sequelize, DataTypes) ->
     description:
       type: DataTypes.TEXT
       allowNull: false
-    lat: 
-      type: DataTypes.FLOAT
+    address: 
+      type: DataTypes.STRING
       allowNull: false
+    lat: 
+      type: DataTypes.DOUBLE
+      allowNull: false
+      validate:
+        min: -90
+        max: 90
     lng:
-      type: DataTypes.FLOAT
+      type: DataTypes.DOUBLE
+      allowNull: false
+      validate:
+        min: -180
+        max: 180
+    tz: 
+      type: DataTypes.STRING
       allowNull: false
   ,
     timestamps: true
