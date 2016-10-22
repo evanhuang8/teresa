@@ -22,6 +22,7 @@ module.exports =
       address: params.address
       lat: params.lat
       lng: params.lng
+      tz: params.tz
       communityId: community.id
     @status = 201
     @body = 
@@ -31,7 +32,7 @@ module.exports =
     return
 
   edit: () ->
-    fields = ['name', 'description', 'address', 'lat', 'lng']
+    fields = ['name', 'description', 'address', 'lat', 'lng', 'tz']
     yield CURD.update.call this, Organization, fields
     return
 

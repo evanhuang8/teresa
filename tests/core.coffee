@@ -154,6 +154,7 @@ describe 'Teresa', ->
           address: '800 N Tucker Blvd, St. Louis, MO 63101'
           lat: 38.6333972
           lng: -90.195599
+          tz: 'US/Central'
         res = yield authedRequest
           .post '/organization/edit/'
           .send params
