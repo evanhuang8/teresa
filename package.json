@@ -22,6 +22,7 @@
   "dependencies": {
     "bcrypt": "0.8.x",
     "co": "4.5.x",
+    "co-request": "1.0.x",
     "koa": "1.2.x",
     "koa-jade": "2.1.x",
     "koa-formidable": "1.0.x",
@@ -36,6 +37,7 @@
     "mysql": "2.11.x",
     "passport-local": "1.0.x",
     "q": "1.4.x",
+    "request": "2.75.x",
     "sequelize": "3.24.x",
     "socket.io": "1.5.x",
     "twilio": "2.9.x"
@@ -53,6 +55,7 @@
     "grunt-contrib-coffee": "1.0.x",
     "grunt-contrib-concat": "1.0.x",
     "grunt-contrib-watch": "0.6.x",
+    "grunt-env": "0.4.x",
     "grunt-mocha-test": "",
     "grunt-newer": "1.2.x",
     "grunt-shell": "1.1.x",
