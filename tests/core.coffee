@@ -11,6 +11,8 @@ supertest = require 'co-supertest'
 request = supertest.agent
 moment = require 'moment-timezone'
 Q = require 'q'
+xml2js = require 'xml2js'
+parseXML = Q.denodeify xml2js.parseString
 
 describe 'Teresa', ->
 
@@ -214,6 +216,34 @@ describe 'Teresa', ->
         for key, val of params
           client[key].should.equal val
         gb.client = client
+        return
+
+  describe 'Handlers', ->
+
+    describe 'Interpreter', ->
+
+      before ->
+        gb.interpreter = require '../src/interpreter'
+        return
+
+      it 'should interpret string', ->
+        result = yield gb.interpreter.interpret 'I want to find a place to sleep near University City'
+        result.intent.should.equal 'shelter'
+        result.location.should.equal 'University City'
+        return
+
+    describe 'Incoming Message', ->
+
+      it 'create referral from generic string', ->
+        res = yield request(gb.app)
+          .post '/referral/message/'
+          .send
+            From: '6613177375'
+            Body: 'Blah'
+          .expect 200
+          .end()
+        # res = yield parseXML res.text
+        # console.log res
         return
 
   after ->

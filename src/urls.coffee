@@ -15,6 +15,7 @@ module.exports = () ->
     community: require './controllers/community'
     organization: require './controllers/organization'
     client: require './controllers/client'
+    referral: require './controllers/referral'
 
   # Index
   urls.all '/', controllers.index.index
