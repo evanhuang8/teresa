@@ -1,0 +1,61 @@
+module.exports = (grunt) ->
+
+  grunt.loadNpmTasks 'grunt-bower-concat'
+  grunt.loadNpmTasks 'grunt-coffee-react'
+  grunt.loadNpmTasks 'grunt-concurrent'
+  grunt.loadNpmTasks 'grunt-contrib-coffee'
+  grunt.loadNpmTasks 'grunt-contrib-concat'
+  grunt.loadNpmTasks 'grunt-contrib-watch'
+  grunt.loadNpmTasks 'grunt-newer'
+  grunt.loadNpmTasks 'grunt-shell'
+
+  grunt.initConfig
+    pkg: grunt.file.readJSON 'package.json'
+    coffee:
+      compile:
+        files: [
+          expand: true
+          cwd: 'src'
+          src: ['**/*.coffee']
+          dest: '.app'
+          ext: '.js'
+        ]
+    cjsx: 
+      compile:
+        files: [
+          expand: true
+          cwd: 'views/jsx'
+          src: ['**/*.cjsx']
+          dest: 'static/js'
+          ext: '.js'
+        ]
+      components: 
+        options: 
+          bare: true
+        files:
+          'static/js/components.js': [
+            'views/jsx/components/**/*.cpt'
+          ]
+    shell:
+      options:
+        execOptions:
+          maxBuffer: 20000 * 1024
+      server:
+        options:
+          stdout: true
+          stderr: true
+        command: 'nodemon --watch src src/runner.coffee'
+    concurrent:
+      dev:
+        tasks: [
+          'shell:server'
+          #'watch'
+        ]
+        options:
+          limit: 10
+          logConcurrentOutput: true
+
+  grunt.registerTask 'compile', ['cjsx']
+  grunt.registerTask 'dev', ['compile', 'concurrent:dev']
+
+  return

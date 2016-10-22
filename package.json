@@ -21,7 +21,36 @@
   "homepage": "https://github.com/evanhuang8/teresa#readme",
   "dependencies": {
     "bcrypt": "0.8.x",
+    "co": "4.5.x",
     "koa": "1.2.x",
-    "sequelize": "3.24.x"
+    "koa-jade": "2.1.x",
+    "koa-formidable": "1.0.x",
+    "koa-session": "3.3.x",
+    "koa-logger": "1.2.x",
+    "koa-mount": "1.3.x",
+    "koa-passport": "1.3.x",
+    "koa-router": "5.4.x",
+    "koa-static": "2.0.x",
+    "lodash": "3.10.x",
+    "moment-timezone": "0.3.x",
+    "mysql": "2.11.x",
+    "passport-local": "1.0.x",
+    "q": "1.4.x",
+    "sequelize": "3.24.x",
+    "socket.io": "1.5.x"
+  },
+  "devDependencies": {
+    "coffee-script": "1.9.x",
+    "grunt": "0.4.x",
+    "grunt-bower-concat": "1.0.x",
+    "grunt-coffee-react": "5.0.x",
+    "grunt-concurrent": "2.0.x",
+    "grunt-contrib-coffee": "1.0.x",
+    "grunt-contrib-concat": "1.0.x",
+    "grunt-contrib-watch": "0.6.x",
+    "grunt-newer": "1.2.x",
+    "grunt-shell": "1.1.x",
+    "mocha": "2.2.x",
+    "supertest": "1.0.x"
   }
 }
