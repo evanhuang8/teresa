@@ -21,6 +21,7 @@ models =
   Community: importTable 'community'
   Organization: importTable 'Organization'
   User: importTable 'user'
+  Referral: importTable 'referral'
   ShelterService: importTable 'shelter'
   ShelterIntent: importTable 'intent'
 

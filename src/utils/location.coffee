@@ -18,9 +18,11 @@ module.exports =
       return [null, null]
     if _res.results.length is 0
       return [null, null]
-    lat = _res.results[0].geometry.location.lat
-    lng = _res.results[0].geometry.location.lng
-    return [lat, lng]
+    result =
+      address: _res.results[0].formatted_address
+      lat: _res.results[0].geometry.location.lat
+      lng: _res.results[0].geometry.location.lng
+    return result
 
   directions: (opts) ->
     origin = opts.origin

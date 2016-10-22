@@ -7,16 +7,17 @@ module.exports = (sequelize, DataTypes) ->
   Referral = sequelize.define 'Referral', 
     isCheckup:
       type: DataTypes.BOOLEAN
+      defaultValue: false
     checkupStatus:
       type: DataTypes.INTEGER
     type:
       type: DataTypes.INTEGER
     address:
-      type: DataType.STRING
+      type: DataTypes.STRING
     lat:
-      type: DataType.DOUBLE
+      type: DataTypes.DOUBLE
     lng:
-      type: DataType.DOUBLE
+      type: DataTypes.DOUBLE
     isConfirmed:
       type: DataTypes.BOOLEAN
       defaultValue: false
@@ -27,6 +28,13 @@ module.exports = (sequelize, DataTypes) ->
     isComplete:
       type: DataTypes.BOOLEAN
       defaultValue: false
+    completedAt:
+      type: DataTypes.DATE
+    isCanceled:
+      type: DataTypes.BOOLEAN
+      defaultValue: false
+    canceledAt:
+      type: DataTypes.DATE
   ,
     timestamps: true
     paranoid: true

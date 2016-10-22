@@ -11,6 +11,8 @@ supertest = require 'co-supertest'
 request = supertest.agent
 moment = require 'moment-timezone'
 Q = require 'q'
+xml2js = require 'xml2js'
+parseXML = Q.denodeify xml2js.parseString
 
 describe 'Teresa', ->
 
@@ -256,6 +258,7 @@ describe 'Teresa', ->
 
       before ->
         gb.interpreter = require '../src/utils/interpreter'
+        gb.Referral = gb.db.model 'Referral'
         return
 
       it 'should interpret string', ->
@@ -266,16 +269,72 @@ describe 'Teresa', ->
 
     describe 'Incoming Message', ->
 
-      it 'create referral from generic string', ->
+      it 'should create referral from generic string', ->
         res = yield request(gb.app)
           .post '/referral/message/'
           .send
-            From: '6613177375'
-            Body: 'I need a bed in Ladue'
+            From: gb.client.phone
+            Body: 'I need help'
           .expect 200
           .end()
-        # res = yield parseXML res.text
-        # console.log res
+        res = yield parseXML res.text
+        should.exist res.Response.Message
+        referral = yield gb.Referral.findOne
+          where:
+            clientId: gb.client.id
+        should.exist referral
+        should.not.exist referral.type
+        should.not.exist referral.address
+        should.not.exist referral.lat
+        should.not.exist referral.lng
+        referral.isCheckup.should.be.false
+        return
+
+      it 'should create referral from intent string', ->
+        yield gb.Referral.destroy
+          where: {}
+        res = yield request(gb.app)
+          .post '/referral/message/'
+          .send
+            From: gb.client.phone
+            Body: 'I need help finding a bed'
+          .expect 200
+          .end()
+        res = yield parseXML res.text
+        should.exist res.Response.Message
+        referral = yield gb.Referral.findOne
+          where:
+            clientId: gb.client.id
+        should.exist referral
+        referral.type.should.equal 1
+        should.not.exist referral.address
+        should.not.exist referral.lat
+        should.not.exist referral.lng
+        referral.isCheckup.should.be.false
+        return
+
+      it 'should create referral from intent & location string', ->
+        @timeout 5000
+        yield gb.Referral.destroy
+          where: {}
+        res = yield request(gb.app)
+          .post '/referral/message/'
+          .send
+            From: gb.client.phone
+            Body: 'I want to find an apartment in Clayton'
+          .expect 200
+          .end()
+        res = yield parseXML res.text
+        should.exist res.Response.Message
+        referral = yield gb.Referral.findOne
+          where:
+            clientId: gb.client.id
+        should.exist referral
+        referral.type.should.equal 2
+        should.exist referral.address
+        should.exist referral.lat
+        should.exist referral.lng
+        referral.isCheckup.should.be.false
         return
 
   describe 'Location', ->
@@ -285,15 +344,15 @@ describe 'Teresa', ->
       return
 
     it '#geocode', ->
-      [lat, lng] = yield gb.LocationUtils.geocode
+      result = yield gb.LocationUtils.geocode
         keyword: 'maryland and taylor'
         near:
           lat: 38.6333972
           lng: -90.195599
-      should.exist lat
-      should.exist lng
-      parseInt(lat * 1000).should.equal 38643
-      parseInt(lng * 1000).should.equal -90257
+      should.exist result.lat
+      should.exist result.lng
+      parseInt(result.lat * 1000).should.equal 38643
+      parseInt(result.lng * 1000).should.equal -90257
       return
 
     it '#direction', ->
@@ -422,40 +481,40 @@ describe 'Teresa', ->
         maxCapacity: 100
         openCapacity: 0
         organizationId: gb.organizations[2].id
-      [lat, lng] = yield gb.LocationUtils.geocode
+      result = yield gb.LocationUtils.geocode
         keyword: 'maryland and taylor'
         near:
           lat: 38.6333972
           lng: -90.195599
       shelters = yield gb.ShelterUtils.nearestShelters
-        lat: lat
-        lng: lng
+        lat: result.lat
+        lng: result.lng
         isAvailable: true
       shelters[0].id.should.equal shelterA.id
       gb.shelters = [shelterA, shelterB, shelterC]
       return
 
     it 'should be able to return the nearest shelter', ->
-      [lat, lng] = yield gb.LocationUtils.geocode
+      result = yield gb.LocationUtils.geocode
         keyword: 'maryland and taylor'
         near:
           lat: 38.6333972
           lng: -90.195599
       shelters = yield gb.ShelterUtils.nearestShelters
-        lat: lat
-        lng: lng
+        lat: result.lat
+        lng: result.lng
       shelters[0].id.should.equal gb.shelters[2].id
       return
 
     it 'should be able to reserve a shelter', ->
-      [lat, lng] = yield gb.LocationUtils.geocode
+      result = yield gb.LocationUtils.geocode
         keyword: 'maryland and taylor'
         near:
           lat: 38.6333972
           lng: -90.195599
       origin = 
-        lat: lat
-        lng: lng
+        lat: result.lat
+        lng: result.lng
       shelter = yield gb.ShelterService.findOne
         include: [
           model: gb.Organization
