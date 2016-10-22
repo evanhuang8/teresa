@@ -6,12 +6,22 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-concat'
   grunt.loadNpmTasks 'grunt-contrib-watch'
+  grunt.loadNpmTasks 'grunt-env'
   grunt.loadNpmTasks 'grunt-mocha-test'
   grunt.loadNpmTasks 'grunt-newer'
   grunt.loadNpmTasks 'grunt-shell'
 
+  credentials = {}
+  try
+    credentials = grunt.file.readJSON 'credentials.json'
+  catch err
+    true
+
   grunt.initConfig
     pkg: grunt.file.readJSON 'package.json'
+    env:
+      options:
+        GOOGLE_API_KEY: credentials.GOOGLE_API_KEY
     coffee:
       compile:
         files: [
@@ -68,7 +78,7 @@ module.exports = (grunt) ->
         ]
 
   grunt.registerTask 'compile', ['cjsx']
-  grunt.registerTask 'dev', ['compile', 'concurrent:dev']
-  grunt.registerTask 'test', ['mochaTest']
+  grunt.registerTask 'dev', ['compile', 'env', 'concurrent:dev']
+  grunt.registerTask 'test', ['env', 'mochaTest']
 
   return

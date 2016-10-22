@@ -280,6 +280,22 @@ describe 'Teresa', ->
         gb.shelter = shelter
         return
 
+  describe 'Location', ->
+
+    before ->
+      gb.LocationUtils = require '../src/utils/location'
+      return
+
+    it '#geocode', ->
+      [lat, lng] = yield gb.LocationUtils.geocode
+        keyword: 'maryland and taylor'
+        near:
+          lat: 38.6333972
+          lng: -90.195599
+      parseInt(lat * 1000).should.equal 38643
+      parseInt(lng * 1000).should.equal -90257
+      return
+
   after ->
 
     return
