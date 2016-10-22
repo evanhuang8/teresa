@@ -122,6 +122,12 @@ describe 'Teresa', ->
 
       before ->
         gb.Organization = gb.db.model 'Organization'
+        return
+
+      after ->
+        yield gb.Organization.destroy
+          where: {}
+          force: true
         orgA = yield gb.Organization.create
           name: 'St. Patrick Center'
           description: 'We do good things.'
@@ -138,11 +144,21 @@ describe 'Teresa', ->
           lat: 38.644379
           lng: -90.495485
           tz: 'US/Central'
+        orgC = yield gb.Organization.create
+          name: 'Evanston'
+          description: 'Ahhhhhhhhhh'
+          communityId: gb.community.id
+          address: '4476 Barat Hall Dr, St. Louis, MO 63108'
+          lat: 38.6440
+          lng: -90.2574
+          tz: 'US/Central'
+        gb.organization = orgA
+        gb.organizations = [orgA, orgB, orgC]
         return
 
       it '#create', ->
         params =
-          name: 'Maryville Group'
+          name: 'St. Patrick'
           description: 'We do good things.'
           communityId: gb.community.id
           address: '80 N Tucker Blvd, St. Louis, MO 63101'
@@ -252,70 +268,145 @@ describe 'Teresa', ->
 
   describe 'Shelter', ->
 
-      before ->
-        gb.ShelterService = gb.db.model 'ShelterService'
-        return
+    before ->
+      gb.ShelterService = gb.db.model 'ShelterService'
+      gb.ShelterUtils = require '../src/controllers/shelter/utils'
+      return
 
-      it '#create', ->
-        hours = []
-        for i in [0...7]
+    after ->
+      hours = []
+      for i in [0...7]
+        hours.push
+          always: true
+      yield gb.ShelterService.destroy
+        where: {}
+        force: true
+      shelterA = yield gb.ShelterService.create
+        name: 'St. Patrick Shelters'
+        description: 'Dope crib'
+        businessHours: hours
+        maxCapacity: 200
+        openCapacity: 150
+        organizationId: gb.organizations[0].id
+      shelterB = yield gb.ShelterService.create
+        name: 'Mercy Shelters'
+        description: 'Not so much good'
+        businessHours: hours
+        maxCapacity: 100
+        openCapacity: 50
+        organizationId: gb.organizations[1].id
+      return
+
+    it '#create', ->
+      hours = []
+      for i in [0...7]
+        hours.push
+          always: true
+      params = 
+        name: 'St. Paddy Shelters'
+        description: 'Welcome to my house - Flo.Rider'
+        businessHours: hours
+        maxCapacity: 190
+        openCapacity: 100
+        organizationId: gb.organization.id
+      res = yield authedRequest
+        .post '/shelter/create/'
+        .send params
+        .expect 201
+        .end()
+      res.body.status.should.equal 'OK'
+      shelter = yield gb.ShelterService.findById res.body.obj.id
+      should.exist shelter
+      for key, val of params
+        shelter[key].should.deep.equal val
+      gb.shelter = shelter
+      return
+
+    it '#edit', ->
+      hours = []
+      for i in [0...7]
+        if i in [2, 4]
+          hours.push
+            start: '05:00PM'
+            end: '9:00AM'
+            overnight: true
+        else
           hours.push
             always: true
-        params = 
-          name: 'St. Paddy Shelters'
-          description: 'Welcome to my house - Flo.Rider'
-          businessHours: hours
-          maxCapacity: 190
-          openCapacity: 100
-          organizationId: gb.organization.id
-        res = yield authedRequest
-          .post '/shelter/create/'
-          .send params
-          .expect 201
-          .end()
-        res.body.status.should.equal 'OK'
-        shelter = yield gb.ShelterService.findById res.body.obj.id
-        should.exist shelter
-        for key, val of params
-          shelter[key].should.deep.equal val
-        gb.shelter = shelter
-        return
+      params = 
+        id: gb.shelter.id
+        name: 'St. Patrick Shelters'
+        description: 'Welcome to my house'
+        businessHours: hours
+        maxCapacity: 200
+        openCapacity: 200
+      res = yield authedRequest
+        .post '/shelter/edit/'
+        .send params
+        .expect 200
+        .end()
+      res.body.status.should.equal 'OK'
+      shelter = yield gb.ShelterService.findById res.body.obj.id
+      should.exist shelter
+      for key, val of params
+        shelter[key].should.deep.equal val
+      gb.shelter = shelter
+      return
 
-      it '#edit', ->
-        hours = []
-        for i in [0...7]
-          if i in [2, 4]
-            hours.push
-              start: '05:00PM'
-              end: '9:00AM'
-              overnight: true
-          else
-            hours.push
-              always: true
-        params = 
-          id: gb.shelter.id
-          name: 'St. Patrick Shelters'
-          description: 'Welcome to my house'
-          businessHours: hours
-          maxCapacity: 200
-          openCapacity: 200
-        res = yield authedRequest
-          .post '/shelter/edit/'
-          .send params
-          .expect 200
-          .end()
-        res.body.status.should.equal 'OK'
-        shelter = yield gb.ShelterService.findById res.body.obj.id
-        should.exist shelter
-        for key, val of params
-          shelter[key].should.deep.equal val
-        gb.shelter = shelter
-        return
+    it 'should return nearest open shelter', ->
+      hours = []
+      for i in [0...7]
+        hours.push
+          always: true
+      yield gb.ShelterService.destroy
+        where: {}
+        force: true
+      shelterA = yield gb.ShelterService.create
+        name: 'St. Patrick Shelters'
+        description: 'Dope crib'
+        businessHours: hours
+        maxCapacity: 200
+        openCapacity: 150
+        organizationId: gb.organizations[0].id
+      shelterB = yield gb.ShelterService.create
+        name: 'Mercy Shelters'
+        description: 'Not so much good'
+        businessHours: hours
+        maxCapacity: 100
+        openCapacity: 50
+        organizationId: gb.organizations[1].id
+      shelterC = yield gb.ShelterService.create
+        name: 'My Crib'
+        description: 'Great'
+        businessHours: hours
+        maxCapacity: 100
+        openCapacity: 0
+        organizationId: gb.organizations[2].id
+      [lat, lng] = yield gb.LocationUtils.geocode
+        keyword: 'maryland and taylor'
+        near:
+          lat: 38.6333972
+          lng: -90.195599
+      shelters = yield gb.ShelterUtils.nearestShelters
+        lat: lat
+        lng: lng
+        isAvailable: true
+      shelters[0].id.should.equal shelterA.id
+      gb.shelters = [shelterA, shelterB, shelterC]
+      return
 
-      it 'should return nearest open shelter', ->
-
-        return
+    it 'should return the nearest shelter', ->
+      [lat, lng] = yield gb.LocationUtils.geocode
+        keyword: 'maryland and taylor'
+        near:
+          lat: 38.6333972
+          lng: -90.195599
+      shelters = yield gb.ShelterUtils.nearestShelters
+        lat: lat
+        lng: lng
+      shelters[0].id.should.equal gb.shelters[2].id
+      return
 
   after ->
-
+    gb.app?.close()
     return

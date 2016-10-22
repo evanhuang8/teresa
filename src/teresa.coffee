@@ -35,7 +35,8 @@ module.exports = class Teresa
     yield db.client.sync()
 
     @app = koa()
-    @app.use logger()
+    if 1 isnt parseInt process.env.T_TEST
+      @app.use logger()
     @app.use formidable()
 
     @app.keys = ['fZsD2ENWT6nN2]G']
