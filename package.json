@@ -1,0 +1,27 @@
+{
+  "name": "teresa",
+  "version": "1.0.0",
+  "description": "A HIMS platform.",
+  "main": "index.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/evanhuang8/teresa.git"
+  },
+  "keywords": [
+    "HIMS"
+  ],
+  "author": "Evan Huang <evanhuang8@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/evanhuang8/teresa/issues"
+  },
+  "homepage": "https://github.com/evanhuang8/teresa#readme",
+  "dependencies": {
+    "bcrypt": "0.8.x",
+    "koa": "1.2.x",
+    "sequelize": "3.24.x"
+  }
+}
