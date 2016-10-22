@@ -1,4 +1,4 @@
-wit = require './witai'
+wit = require '../witai'
 
 module.exports = 
 
@@ -16,6 +16,7 @@ module.exports =
       if interpretation.entities.intent?
         for _intent in interpretation.entities.intent
           intent = _intent.value
+      if interpretation.entities.location?
         for _location in interpretation.entities.location
           location = _location.value
     result =

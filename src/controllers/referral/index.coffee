@@ -1,7 +1,7 @@
 db = require '../../db'
 Client = db.model 'Client'
 
-interpreter = require '../../interpreter'
+interpreter = require '../../utils/interpreter'
 
 createReferral = (client, body) ->
   if not client?
@@ -19,6 +19,11 @@ module.exports =
       @body = 
         status: 'OK'
         message: 'Must include a from number'
+    body = params.Body
+    if not body? or body.trim() is ''
+      @body =
+        status: 'OK'
+        message: 'Must include a message body'
     if from.length is 12
       from = from.substring 2
     client = yield Client.findOne
@@ -28,6 +33,7 @@ module.exports =
       client = yield Client.create
         phone: from
         stage: 'unknown'
+    yield createReferral client, body
     @body = 
       status: 'OK'
     yield

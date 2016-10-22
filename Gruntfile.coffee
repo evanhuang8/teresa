@@ -16,12 +16,15 @@ module.exports = (grunt) ->
     credentials = grunt.file.readJSON 'credentials.json'
   catch err
     true
+  console.log credentials
 
   grunt.initConfig
     pkg: grunt.file.readJSON 'package.json'
     env:
       options:
         GOOGLE_API_KEY: credentials.GOOGLE_API_KEY
+        WIT_AI_ID: credentials.WIT_AI_ID
+        WIT_AI_TOKEN: credentials.WIT_AI_TOKEN
     coffee:
       compile:
         files: [

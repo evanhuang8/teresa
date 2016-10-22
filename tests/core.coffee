@@ -225,7 +225,7 @@ describe 'Teresa', ->
     describe 'Interpreter', ->
 
       before ->
-        gb.interpreter = require '../src/interpreter'
+        gb.interpreter = require '../src/utils/interpreter'
         return
 
       it 'should interpret string', ->
@@ -241,7 +241,7 @@ describe 'Teresa', ->
           .post '/referral/message/'
           .send
             From: '6613177375'
-            Body: 'Blah'
+            Body: 'I need a bed in Ladue'
           .expect 200
           .end()
         # res = yield parseXML res.text
