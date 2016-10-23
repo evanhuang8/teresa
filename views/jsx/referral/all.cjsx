@@ -35,27 +35,16 @@ ReferralList = React.createClass
     return
 
   render: ->
-    <table className="table">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Client Name</th>
-          <th>Service Name</th>
-          <th>Referred By</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        {
-          if @state.referrals? and @state.referrals.length > 0
-            @state.referrals.map (referral) =>
-              <ReferralListItem
-                referral={referral}
-                handleConfirmReferral={@handleConfirmReferral}
-              />
-        }
-      </tbody>
-    </table>
+    <div className="row">
+      {
+        if @state.referrals? and @state.referrals.length > 0
+          @state.referrals.map (referral) =>
+            <ReferralListItem
+              referral={referral}
+              handleConfirmReferral={@handleConfirmReferral}
+            />
+      }      
+    </div>
 
 ReferralListItem = React.createClass
 
@@ -65,54 +54,72 @@ ReferralListItem = React.createClass
 
   render: ->
     referral = @props.referral
-    <tr>
-      <td>
-        {moment.tz(referral.createdAt, 'US/Central').format('MM/DD hh:mmA')}
-      </td>
-      <td>
-        {
-          if referral.client.firstName?
-            "#{referral.client.firstName} "
-        }
-        {
-          if referral.client.lastName?
-            "#{referral.client.lastName} "
-        }
-        {
-          if not referral.client.firstName? and not referral.client.lastName?
-            'N/A '
-        }
-        {
-          if not referral.client.firstName? and not referral.client.lastName? and referral.client.phone?
-            "(phone: #{referral.client.phone})"
-        }
-      </td>
-      <td>
+    <div className="col-md-4">
+      <div className="card">
+        <div className="card-block">
+          {
+            if referral.referer?
+              <h6 className="card-subtitle pt-1" style={
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
+                }>
+                <span className="text-muted">Referral from</span> {referral.referer.name}
+              </h6>
+          }
+        </div>
         {
           if referral.referer?
-            referral.referer.name
+            <div className="list-group list-group-flush">
+              <div className="list-group-item" style={height: '125px'}>
+                <img src={referral.referer.image} style={
+                    maxWidth: '75%',
+                    maxHeight: '75%',
+                    margin: '20px auto',
+                    display: 'block'
+                  }/>                  
+              </div>
+            </div>
         }
-      </td>
-      <td>
-        {referral.service.name}
-      </td>
-      <td>
-        {
-          if not referral.isConfirmed
-            <a className="btn btn-sm btn-success" href="javascript:;" onClick={@props.handleConfirmReferral.bind @, referral}>Confirm</a>
-          else
-            <span>
-              {
-                if referral.isComplete
-                  'Completed'
-                else
-                  'Confirmed'
+        <div className="card-block">
+          <h4 className="card-title">
+            {
+              if referral.client.firstName?
+                "#{referral.client.firstName} #{referral.client.lastName}"
+              else
+                'Name N/A'
+            }
+          </h4>
+          <h6 className="card-subtitle"><span className="text-muted">for</span> {referral.service.name}</h6>
+        </div>
+        <div className="card-footer">
+          {
+            if not referral.isConfirmed
+              <a className="text-success" href="javascript:;" onClick={@props.handleConfirmReferral.bind @, referral}>Confirm Referral</a>
+          }
+          {
+            if referral.isConfirmed
+              <small>
+                {
+                  if referral.isComplete
+                    'Completed'
+                  else
+                    'Confirmed'
 
-              }
-            </span>
-        }
-      </td>
-    </tr>
+                }
+              </small>
+            else
+              <span>
+                &nbsp;
+                <small>
+                  Referred
+                </small>
+              </span>
+          }
+          <small className="text-muted"> {moment.tz(referral.createdAt, 'US/Central').format('MM/DD, hh:mmA')}</small>
+        </div>
+      </div>
+    </div>
 
 @Teresa.referral.all = 
 
@@ -120,7 +127,7 @@ ReferralListItem = React.createClass
 
   init: () ->
 
-    @referralList = React.render(<ReferralList />, $('div#referral-list')[0])
+    @referralList = React.render(<ReferralList />, $('div#rct-referral-list')[0])
 
     Teresa.handleNewReferral = (referral) =>
       @referralList.fetchReferrals()

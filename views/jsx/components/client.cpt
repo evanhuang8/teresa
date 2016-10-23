@@ -150,7 +150,7 @@ ClientSummary = React.createClass
     <div className="card">
       <div className="card-header">
         <h5 className="card-title card-title--with-input">
-          Patient Summary
+          Client Summary
         </h5>
       </div>
       {

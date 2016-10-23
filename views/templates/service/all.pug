@@ -5,17 +5,14 @@ block vars
 
 block content
   +l-section()
-    div.card
-      div.card-block
-        h1.card-title Services
-        ul.list-group
-          each service in services
-            li.list-group-item
-              h4=service.name
-              p=service.description
-              if service.maxCapacity == 0
-                p Unlimited Capacity
-              else
-                p Available Capacity: #{service.openCapacity}/#{service.maxCapacity}
-              p
-                span.tag.tag-default=service.type
+    each service in services
+      div.card
+        div.card-block
+          h4.card-title=service.name
+          p=service.description
+          if service.maxCapacity == 0
+            p Unlimited Capacity
+          else
+            p Available Capacity: #{service.openCapacity}/#{service.maxCapacity}
+          p
+            span.tag.tag-default=service.type
