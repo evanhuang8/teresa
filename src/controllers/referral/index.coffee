@@ -1,47 +1,67 @@
+moment = require 'moment-timezone'
+
 db = require '../../db'
 Client = db.model 'Client'
 Service = db.model 'Service'
 Referral = db.model 'Referral'
 
-MessageHandler = require('./handler').getMessageHandler()
+handler = require('./handler').getMessageHandler()
 
 Interpreter = require '../../utils/interpreter'
 LocationUtils = require '../../utils/location'
 ServiceUtils = require '../../controllers/service/utils'
 
-INTENT_TYPES = ['shelter', 'housing', 'health', 'finances']
+SERVICE_TYPES = [
+  'shelter'
+  'health'
+  'housing'
+  'job'
+  'food'
+  'funding'
+]
+
+findOrCreateClient = (phone) ->
+  client = yield Client.findOne
+    where:
+      phone: phone
+  if not client?
+    client = yield Client.create
+      phone: phone
+      stage: 'unknown'
+  return client
 
 findOrCreateReferral = (client, body) ->
   referral = yield Referral.findOne
     where:
+      isConnection: false
       isComplete: false
       isCanceled: false
       clientId: client.id
+      updatedAt:
+        $gt: new Date moment().subtract(2, 'hours').valueOf()
     order: [
       ['createdAt', 'DESC']
     ]
   if not referral?
-    referral = yield createIncomingReferral client, body
+    referral = yield createReferral client, body
   return referral
 
-createIncomingReferral = (client, body) ->
-  type = null
+createReferral = (client, body) ->
   address = null
   lat = null
   lng = null
+  type = null
   if not client?
     throw new Error 'Must include a client'
   result = yield Interpreter.interpret body
-  if result.intent? and result.intent in INTENT_TYPES
+  if result.intent? and result.intent in SERVICE_TYPES
     type = result.intent
   if result.location?
     data = yield LocationUtils.geocode
       keyword: result.location
-    if data?.address?
-      address = data.address
-    if data?.lat?
+    if data?
+      address = result.location
       lat = data.lat
-    if data?.lng?
       lng = data.lng
   referral = yield Referral.create
     type: type
@@ -112,28 +132,15 @@ module.exports =
     params = @request.body
     from = params.From
     if not from?
-      @body = 
-        status: 'OK'
-        message: 'Must include a from number'
-    body = params.Body
-    if not body? or body.trim() is ''
-      @body =
-        status: 'OK'
-        message: 'Must include a message body'
-    referral = null
-    if from.length is 12
-      from = from.substring 2
-    client = yield Client.findOne
-      where:
-        phone: from
-    if not client?
-      client = yield Client.create
-        phone: from
-        stage: 'unknown'
-      referral = yield createIncomingReferral client, body
-    if not referral?
-      referral = yield findOrCreateReferral client, body
+      @status = 400
+      return
+    body = params.Body?.trim()
+    if not body? or body is ''
+      @status = 400
+      return
+    client = yield findOrCreateClient from
+    referral = yield findOrCreateReferral client, body
     @request.query =
       id: referral.id
-    yield MessageHandler.handle this
+    yield handler.handle this
     return

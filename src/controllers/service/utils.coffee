@@ -52,7 +52,7 @@ module.exports =
 
   reserve: (opts) ->
     client = opts.client
-    referral = otps.referral
+    referral = opts.referral
     service = opts.service
     if service.maxCapacity isnt 0 and service.openCapacity <= 0
       return
@@ -62,6 +62,7 @@ module.exports =
     yield db.client.transaction (t) =>
       return co () =>
         if service.maxCapacity > 0
+          service = yield Service.findById service.id
           yield service.decrement 'openCapacity', 
             transaction: t
         expiresAt = moment().add 15, 'minutes'

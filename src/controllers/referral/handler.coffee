@@ -25,13 +25,57 @@ SERVICE_TYPES = [
 ]
 
 findServices = (referral) ->
-  services = yield ServiceUtils.nearestServies
+  services = yield ServiceUtils.nearestServices
     type: referral.type
     lat: referral.lat
     lng: referral.lng
     isAvailable: true
     isOpen: true
   return services
+
+seekService = (referral) ->
+  services = yield findServices referral
+  message = ''
+  if services.length > 0
+    service = services[0]
+    organization = yield Organization.findById service.organizationId
+    directions = yield LocationUtils.directions
+      origin: 
+        lat: referral.lat
+        lng: referral.lng
+      destination:
+        lat: organization.lat
+        lng: organization.lng
+    message = messenger.referral service, directions
+    # Confirm intent
+    intent = true
+    if service.maxCapacity > 0
+      intent = false
+      for i in [0...3] # Try 3 times
+        try
+          intent = yield ServiceUtils.reserve
+            client: referral.client
+            referral: referral
+            service: service
+          break
+        catch err
+          console.log err.stack
+          true
+    if intent
+      referral.serviceId = service.id
+      referral.refereeId = service.organizationId
+      message = messenger.referral service, directions, intent isnt true
+    else
+      referral.isUnavailable = true
+      message = messenger.noReferrals()
+  else
+    referral.isUnavailable = true
+    message = messenger.noReferrals()
+  yield referral.save()
+  return message
+
+makeConnection = (referral) ->
+  yield return
 
 module.exports = 
 
@@ -65,8 +109,7 @@ module.exports =
       return not referral? or referral.isConnection
     , (handler) ->
       handler.reply 'You have reached the Teresa system. Message & data rates may apply.'
-      yield
-      return
+      yield return
 
     ###
     Initialize & type
@@ -78,7 +121,13 @@ module.exports =
       referral = handler.data.referral
       referer = referral.referer
       client = referral.client
-      message = messenger.menu()
+      if referral.type?
+        if referral.address?
+          message = yield seekService referral
+        else
+          message = messenger.address()
+      else
+        message = messenger.menu()
       handler.reply message 
       referral.isInitialized = true
       yield referral.save()
@@ -96,12 +145,14 @@ module.exports =
       if value not in values
         handler.reply messenger.parseErrorMenu()
         return
+      referral = handler.data.referral
       if value is 7
         referral.isConnection = true
         yield referral.save()
-        # FIXME: out going call with 211
+        yield makeConnection referral
+        handler.reply messenger.connection()
         return
-      referral.type = types[value - 1]
+      referral.type = SERVICE_TYPES[value - 1]
       yield referral.save()
       handler.reply messenger.address()
       return
@@ -122,49 +173,35 @@ module.exports =
       if not (result? and result.lat? and result.lng?)
         handler.reply messenger.parseErrorAddress()
         return
-      # Update status
       referral.address = result.address
       referral.lat = result.lat
       referral.lng = result.lng
       yield referral.save()
-      services = yield findServices referral
-      message = ''
-      if services.length > 0
-        service = services[0]
-        organization = yield Organization.findById service.organizationId
-        directions = yield LocationUtils.directions
-          origin: 
-            lat: referral.lat
-            lng: referral.lng
-          destination:
-            lat: organization.lat
-            lng: organization.lng
-        message = messenger.referral service, directions
-        # Confirm intent
-        intent = true
-        if service.maxCapacity > 0
-          intent = false
-          for i in [0...3] # Try 3 times
-            try
-              intent = yield ServiceUtils.reserve
-                client: referral.client
-                referral: referral
-                service: service
-              break
-            catch err
-              true
-        if intent
-          referral.serviceId = shelter.id
-          referral.refereeId = shelter.organizationId
-          message = messenger.referral service, directions, intent isnt true
-        else
-          referral.isUnavailable = true
-          message = messenger.noReferrals()
-      else
-        referral.isUnavailable = true
-        message = messenger.noReferrals()
-      yield referral.save()
+      message = yield seekService referral
       handler.reply message
+      return
+
+    ###
+    Connection
+    ###
+    handler.addHook (handler, body) ->
+      referral = handler.data.referral
+      return referral.isUnavailable
+    , (handler, body) ->
+      if not handler.isYesNo body
+        handler.reply messenger.parseErrorYesNo()
+        return
+      referral = handler.data.referral
+      value = handler.isYes body
+      if value
+        referral.isConnection = true
+        yield referral.save()
+        yield makeConnection referral
+        handler.reply messenger.connection()
+        return
+      referral.isCanceled = true
+      referral.canceledAt = new Date()
+      handler.reply messenger.cancel()
       return
 
     ###
@@ -185,10 +222,16 @@ module.exports =
       if isReserved
         # FIXME: Cancel the intent expiration
         service = referral.service
-        if services.isConfirmationRequired
+        if service.isConfirmationRequired
           # FIXME: send message to notify service provider
+          message = messenger.pendingConfirmation()
         else
           referral.isConfirmed = true
+          # FIXME: schedule follow up message
+          intent = yield Intent.findOne
+            where:
+              referralId: referral.id
+          message = messenger.confirmed intent?.code
       else
         referral.isCanceled = true
         referral.canceledAt = new Date()
@@ -196,6 +239,39 @@ module.exports =
       yield referral.save()
       handler.reply message
       yield referral.save()
+      return
+
+    ###
+    Direction
+    ###
+    handler.addHook (handler, body) ->
+      referral = handler.data.referral
+      return not referral.isDirectionSent? or body is 'direction'
+    , (handler, body) ->
+      referral = handler.data.referral
+      if not referral.isDirectionSent? and not handler.isYesNo body
+        handler.reply messenger.parseErrorYesNo()
+        return
+      referral = handler.data.referral
+      if not referral.isDirectionSent?
+        referral.isDirectionSent = handler.isYes body
+        yield referral.save()
+      if body is 'direction' or referral.isDirectionSent
+        organization = yield Organization.findById referral.service.organizationId
+        directions = yield LocationUtils.directions
+          origin: 
+            lat: referral.lat
+            lng: referral.lng
+          destination:
+            lat: organization.lat
+            lng: organization.lng
+        if not directions?
+          handler.reply messenger.noDirections()
+          return
+        message = directions.steps.join '\n'
+        handler.reply message
+        return
+      handler.reply messenger.end()
       return
 
     return handler

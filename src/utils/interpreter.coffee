@@ -1,7 +1,6 @@
 wit = require '../witai'
 
 module.exports = 
-
   
   ###
   Take in a message body and attempt to parse:

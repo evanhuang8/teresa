@@ -348,6 +348,7 @@ describe 'Teresa', ->
         maxCapacity: 100
         openCapacity: 50
         organizationId: gb.organizations[1].id
+      gb.services = [serviceA, serviceB]
       return
 
     it '#create', ->
@@ -467,127 +468,109 @@ describe 'Teresa', ->
       services[0].id.should.equal gb.services[2].id
       return
 
-    it.skip 'should be able to reserve a service', ->
-      @timeout 10000
-      result = yield gb.LocationUtils.geocode
-        keyword: 'maryland and taylor'
-        near:
-          lat: 38.6333972
-          lng: -90.195599
-      origin = 
-        lat: result.lat
-        lng: result.lng
-      service = yield gb.Service.findOne
-        include: [
-          model: gb.Organization
-          as: 'organization'
-        ] 
-        where:
-          id: gb.services[0].id
-      destination =
-        lat: service.organization.lat
-        lng: service.organization.lng
-      [intent, directions] = yield gb.ServiceUtils.reserve
-        client: gb.client
-        service: service
-        origin: origin
-        destination: destination
-      should.exist intent
-      should.exist directions
-      capacity = service.openCapacity
-      service = yield gb.Service.findById service.id
-      service.openCapacity.should.equal capacity - 1
+  describe 'Interpreter', ->
+
+    before ->
+      gb.interpreter = require '../src/utils/interpreter'
       return
 
-  describe.skip 'Handlers', ->
+    it 'should interpret string', ->
+      result = yield gb.interpreter.interpret 'I want to find a place to sleep near University City'
+      result.intent.should.equal 'shelter'
+      result.location.should.equal 'University City'
+      return
 
-    describe 'Interpreter', ->
+  describe 'Self-initiated referral (help line)', ->
 
-      before ->
-        gb.interpreter = require '../src/utils/interpreter'
-        gb.Referral = gb.db.model 'Referral'
-        return
+    before ->
+      gb.Referral = gb.db.model 'Referral'
+      gb.Intent = gb.db.model 'Intent'
+      gb.messenger = require '../src/controllers/referral/messenger'
+      gb._phone = '+16623177375'
+      return
 
-      it 'should interpret string', ->
-        result = yield gb.interpreter.interpret 'I want to find a place to sleep near University City'
-        result.intent.should.equal 'service'
-        result.location.should.equal 'University City'
-        return
+    beforeEach ->
+      yield gb.Referral.destroy
+        where: {}
+      yield gb.Client.destroy
+        where:
+          phone: gb._phone
+      return
 
-    describe 'Incoming Message', ->
-
-      it 'should create referral from generic string', ->
-        steps = [
-          input: 'i need some help'
-        ]
-        messenger = new MessageTests
-          app: gb.app
-          from: '3141230909'
-          steps: steps
-          url: '/referral/message/'
-          debug: true
-        yield messenger.run()
-        referral = yield gb.Client.findOne
-          where:
-            phone: '3141230909'
-        should.exist referral
-
-        return
-
-      it 'should create referral from intent string', ->
-        yield gb.Referral.destroy
-          where: {}
-        res = yield request(gb.app)
-          .post '/referral/message/'
-          .send
-            From: gb.client.phone
-            Body: 'I need help finding an apartment'
-          .expect 200
-          .end()
-        res = yield parseXML res.text
-        should.exist res.Response.Message
-        referral = yield gb.Referral.findOne
-          where:
-            clientId: gb.client.id
-        should.exist referral
-        referral.type.should.equal 'housing'
-        should.not.exist referral.address
-        should.not.exist referral.lat
-        should.not.exist referral.lng
-        referral.isCheckup.should.be.false
-        return
-
-      it 'should create referral from intent & location string', ->
-        @timeout 5000
-        yield gb.Referral.destroy
-          where: {}
-        res = yield request(gb.app)
-          .post '/referral/message/'
-          .send
-            From: gb.client.phone
-            Body: 'I want to find a bed near Broadway Oyster Bar'
-          .expect 200
-          .end()
-        res = yield parseXML res.text
-        should.exist res.Response.Message
-        referral = yield gb.Referral.findOne
-          where:
-            clientId: gb.client.id
-        should.exist referral
-        referral.type.should.equal 'service'
-        should.exist referral.address
-        should.exist referral.lat
-        should.exist referral.lng
-        referral.isCheckup.should.be.false
-        res = yield request(gb.app)
-          .post '/referral/message/'
-          .send
-            From: gb.client.phone
-            Body: 'yes'
-          .expect 200
-          .end()
-        res = yield parseXML res.text
-        return
+    it 'should handle incoming message #1', ->
+      steps = [
+        input: 'i need shelter'
+        expect: gb.messenger.address()
+      ]
+      messenger = new MessageTests
+        app: gb.app
+        from: gb._phone
+        url: '/referral/message/'
+        steps: steps
+      yield messenger.run()
+      client = yield gb.Client.findOne
+        where:
+          phone: gb._phone
+      should.exist client
+      referral = yield gb.Referral.findOne
+        where:
+          clientId: client.id
+      should.exist referral
+      referral.type.should.equal 'shelter'
+      referral.isInitialized.should.be.true
+      code = null
+      steps = [
+        input: 'Maryland St. & Taylor St.'
+        assert:
+          referral:
+            values:
+              serviceId: gb.services[0].id
+              refereeId: gb.services[0].organizationId
+            exists: ['address', 'lat', 'lng']
+        test: ->
+          intent = yield gb.Intent.findOne
+            where:
+              referralId: referral.id
+          should.exist intent
+          code = intent.code
+          return
+      ]
+      messenger = new MessageTests
+        app: gb.app
+        from: gb._phone
+        url: '/referral/message/'
+        steps: steps
+        assert:
+          referral: referral
+      yield messenger.run()
+      referral = yield gb.Referral.findById referral.id
+      steps = [
+        input: 'yes'
+        expect: gb.messenger.confirmed code
+        assert:
+          referral: 
+            values:
+              isReserved: true
+              isConfirmed: true
+      ,
+        input: 'no'
+        expect: gb.messenger.end()
+        assert:
+          referral:
+            values:
+              isDirectionSent: false
+      ,
+        input: 'direction'
+      ]
+      messenger = new MessageTests
+        app: gb.app
+        from: gb._phone
+        url: '/referral/message/'
+        steps: steps
+        assert:
+          referral: referral
+      yield messenger.run()
+      return
 
   after ->
     gb.app?.close()
