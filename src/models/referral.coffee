@@ -19,7 +19,6 @@ module.exports = (sequelize, DataTypes) ->
     lng: DataTypes.DOUBLE
     isReserved:
       type: DataTypes.BOOLEAN
-      defaultValue: false
     isConfirmed:
       type: DataTypes.BOOLEAN
       defaultValue: false

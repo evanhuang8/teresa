@@ -43,10 +43,11 @@ module.exports =
     steps = []
     duration = 0
     for leg, i in route.legs
-      duration += leg.duration.value
-      instruction = decodeURIComponent(leg.html_instructions).replace /<(?:.|\n)*?>/gm, ''
-      step = "#{i + 1}) In #{leg.distance.text}, #{instruction}"
-      steps.push step
+      for _step, j in leg.steps
+        duration += _step.duration.value
+        instruction = decodeURIComponent(_step.html_instructions).replace /<(?:.|\n)*?>/gm, ''
+        step = "#{j + 1}) In #{_step.distance.text}, #{instruction}"
+        steps.push step
     result = 
       steps: steps
       duration: duration # seconds
