@@ -7,13 +7,33 @@
   padding-bottom: $grid-gutter-width-base;
 }
 
+$green-lighter: #e7ffd9;
+
+.bg-green-lighter {
+  background-color: $green-lighter;
+}
+
 .bg-grey-lighter {
   background-color: $gray-lighter;
 }
 
+.bg-grad-grey-lighter {
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f8f8f8+0,ffffff+100 */
+  background: #eceeef; /* Old browsers */
+  background: -moz-linear-gradient(-45deg,  #eceeef 0%, #ffffff 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(-45deg,  #eceeef 0%,#ffffff 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(135deg,  #eceeef 0%,#ffffff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eceeef', endColorstr='#ffffff',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+
+.navbar-full,
+.navigation--breadcrumb {
+  border-bottom: 1px solid $gray-lighter;
+}
+
 .header__bug,
 .header__title {
-  padding-top: $grid-gutter-width-base / 2;
+  padding-top: $grid-gutter-width-base;
 }
 
 .header__subtitle {

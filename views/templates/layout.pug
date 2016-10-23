@@ -33,7 +33,7 @@ html(lang="en")
       div#wrapper-content
         block header
           if user
-            div.navigation--breadcrumb.bg-grey-lighter
+            div.navigation--breadcrumb.bg-grad-grey-lighter
               div.container
                 div.row
                   a(href="/community") St. Louis City Continuum of Care
@@ -52,11 +52,11 @@ html(lang="en")
                     li.nav-item
                       a.nav-link(href="/organization", class=endpoint == '/' ? 'active' : '') Overview
                     li.nav-item
-                      a.nav-link(href="/referral/all", class=endpoint == '/referral/all' ? 'active' : '') Service
+                      a.nav-link(href="/referral/all", class=endpoint == '/referral' ? 'active' : '') Services
                     li.nav-item
-                      a.nav-link(href="/user/all", class=endpoint == '/user/all' ? 'active' : '') Providers
+                      a.nav-link(href="/user/all", class=endpoint == '/user' ? 'active' : '') Providers
                     li.nav-item
-                      a.nav-link(href="/client/all", class=endpoint == '/client/all' ? 'active' : '') Clients
+                      a.nav-link(href="/client/all", class=endpoint == '/client' ? 'active' : '') Clients
         block content
           +l-section()
             h2 Organization Overview

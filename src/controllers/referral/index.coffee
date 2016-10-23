@@ -84,6 +84,7 @@ module.exports =
     client = yield Client.findById id
     @render 'referral/add',
       client: client
+      user: @passport.user
     yield return
 
   refer: () ->

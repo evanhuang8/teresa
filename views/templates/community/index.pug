@@ -1,16 +1,19 @@
 extend ../layout
 
+block vars
+  - var endpoint = '/community'
+
 block header
-  div
+  div.bg-grad-grey-lighter
     div.container
       div.row
-        h1 St. Louis City CoC
-        h2 60 Organizations
-    +l-section('aquamarine')
+        h1.header__title St. Louis City CoC
+        h2.header__subtitle 60 Organizations
+    +l-section().navigation--subnavigation.bg-green-lighter
       div.row
         ul.nav.nav-pills
           li.nav-item
-            a.nav-link(href="/community") Organizations
+            a.nav-link(href="/community", class=endpoint == '/community' ? 'active' : '') Organizations
           li.nav-item
             a.nav-link(href="/client/all") Clients
 
