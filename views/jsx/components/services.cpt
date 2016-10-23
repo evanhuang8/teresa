@@ -89,13 +89,20 @@ ServicesListItem = React.createClass
     return state
 
   render: ->
+    tagClass = switch @props.service.type
+      when 'shelter' then 'tag-primary'
+      when 'housing' then 'tag-success'
+      when 'food' then 'tag-warning'
+      when 'job' then 'tag-info'
+      when 'health' then 'tag-danger'
+      else 'tag-default'
     <div className="col-md-6">
       <div className="card">
         <div className="card-block">
           <h3 className="card-title">{@props.service.name}</h3>
           <p className="text-muted">{@props.service.description}</p>
-          <p className="tag tag-default">{@props.service.type.charAt(0).toUpperCase() + @props.service.type.slice(1)}</p>
-          <p><a className="btn btn-primary" href="javascript:;" onClick={@props.handleChooseService.bind @, @props.service}>Select Service</a></p>
+          <p className="tag #{tagClass}">{@props.service.type.charAt(0).toUpperCase() + @props.service.type.slice(1)}</p>
+          <p><a className="btn btn-primary" href="javascript:;" onClick={@props.handleChooseService.bind @, @props.service}>Make Referral</a></p>
         </div>
       </div>
     </div>
