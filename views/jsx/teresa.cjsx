@@ -45,6 +45,7 @@
     return
 
   socket: undefined
+  handleNewReferral: undefined
 
   initSocket: () ->
 
@@ -59,8 +60,8 @@
         orgId: _orgId
       return
 
-    @socket.on 'new_referral', (referral) ->
-      console.log referral
+    @socket.on 'new_referral', (referral) =>
+      @handleNewReferral referral
       return
 
     return
