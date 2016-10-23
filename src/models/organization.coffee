@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) ->
     tz: 
       type: DataTypes.STRING
       allowNull: false
+    image: DataTypes.STRING
   ,
     timestamps: true
     paranoid: true

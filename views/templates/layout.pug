@@ -61,6 +61,11 @@ html(lang="en")
           +l-section()
             h2 Organization Overview
     div#scripts
+      if user
+        script.
+          var _userId = !{JSON.stringify(user.id).replace(/<\//g, "<\\/")};
+          var _orgId = !{JSON.stringify(user.organizationId).replace(/<\//g, "<\\/")};
+      script(src=`/socket.io/socket.io.js`)
       script(src=`${staticPrefix}js/libraries.js`)
       script(src=`${staticPrefix}js/app.js`)
       block scripts

@@ -3,6 +3,7 @@ Teresa server
 ###
 
 path = require 'path'
+http = require 'http'
 
 co = require 'co'
 koa = require 'koa'
@@ -19,6 +20,7 @@ LocalStrategy = require 'passport-local'
 urls = require './urls'
 db = require './db'
 queue = require './tasks/queue'
+io = require './io'
 
 User = db.model 'User'
 
@@ -96,6 +98,8 @@ module.exports = class Teresa
     router = urls()
     @app.use router.routes()
 
-    server = @app.listen @port
+    server = http.createServer @app.callback()
+    io.init server
+    server.listen @port
 
     return server

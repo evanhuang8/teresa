@@ -53,6 +53,7 @@
     "co-mocha": "1.1.x",
     "co-supertest": "0.0.x",
     "coffee-script": "1.9.x",
+    "csv": "1.1.x",
     "faker": "3.1.x",
     "grunt": "0.4.x",
     "grunt-bower-concat": "1.0.x",
