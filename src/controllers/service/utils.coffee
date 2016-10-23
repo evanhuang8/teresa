@@ -55,8 +55,6 @@ module.exports =
     service = opts.service
     if service.maxCapacity isnt 0 and service.openCapacity <= 0
       return
-    origin = opts.origin
-    destination = opts.destination
     intent = null
     yield db.client.transaction (t) =>
       return co () =>
