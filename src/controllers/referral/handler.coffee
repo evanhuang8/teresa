@@ -119,13 +119,43 @@ module.exports =
 
     handler = new MessageHandler retriever
 
-    # Disclaimer
+    ###
+    Default
+    ###
     handler.addHook (handler, body) ->
       referral = handler.data.referral
       return not referral? or referral.isConnection
     , (handler) ->
       handler.reply 'You have reached the Teresa system. Message & data rates may apply.'
       yield return
+
+    ###
+    Checkup status
+    ###
+    handler.addHook (handler, body) ->
+      referral = handler.data.referral
+      return referral.isCheckup and not referral.checkupStatus?
+    , (handler, body) ->
+      value = parseInt body
+      if value not in [1..3]
+        handler.reply messenger.parseErrorCheckup()
+        return 
+      referral.checkupStatus = value
+      message = ''
+      if value is 1
+        referral.isCanceled = true
+        referral.canceledAt = new Date()
+        message = messenger.well()
+      else if value is 2
+        referral.isConnection = true
+        yield makeConnection referral
+        message = messenger.connection()
+      else
+        referral.isInitialized = true
+        message = messenger.menu()
+      yield referral.save()
+      handler.reply message
+      return
 
     ###
     Initialize & type
