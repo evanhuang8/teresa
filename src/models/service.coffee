@@ -66,6 +66,8 @@ module.exports = (sequelize, DataTypes) ->
     isConfirmationRequired: 
       type: DataTypes.BOOLEAN
       defaultValue: false
+    completionCost: DataTypes.FLOAT
+    missedCost: DataTypes.FLOAT
     refreshedAt: DataTypes.DATE
   ,
     timestamps: true
