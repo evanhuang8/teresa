@@ -1,3 +1,91 @@
+ClientForm = React.createClass
+
+  getInitialState: ->
+    state =
+      client: null
+    return state
+
+  fetchClient: ->
+    params =
+      id: @props.clientId
+    Teresa.postJSON '/client/fetch_single', params, (response) =>
+      if response.status is 'OK'
+        @setState
+          client: response.client
+      else
+        console.log response
+      return
+    return
+
+  componentDidMount: ->
+    if @props.editing
+      @fetchClient()
+    return
+
+  getClientField: (field) ->
+    if @state.client? and @state.client[field]?
+      return @state.client[field]
+    return null
+
+  handleSubmit: ->
+    params = $(@refs.clientForm.getDOMNode()).serializeObject()
+    if @props.editing
+      params.id = @state.client.id
+      Teresa.postJSON '/client/edit', params, (response) =>
+        if response.status is 'OK'
+          console.log response
+        else
+          console.log response
+        return
+      return
+    Teresa.postJSON '/client/create', params, (response) =>
+      if response.status is 'OK'
+        console.log response
+      else
+        console.log response
+      return
+    return
+
+  render: ->
+    <div>
+      {
+        if not @props.editing or @state.client?
+          client = @state.client
+          <form ref="clientForm">
+            <div className="form-group">
+              <label>First Name</label>
+              <input type="text" className="form-control" name="firstName" placeholder="Enter Client First Name" defaultValue={@getClientField 'firstName'} />
+            </div>
+            <div className="form-group">
+              <label>Last Name</label>
+              <input type="text" className="form-control" name="lastName" placeholder="Enter Client Last Name" defaultValue={@getClientField 'lastName'} />
+            </div>
+            <div className="form-group">
+              <label>Phone Number</label>
+              <input type="text" className="form-control" name="phone" placeholder="Enter Client Phone" defaultValue={@getClientField 'phone'} />
+            </div>
+            <div className="form-group">
+              <label>Date of Birth (mm/dd/yyyy)</label>
+              <input type="date" className="form-control" name="dob" placeholder="Enter Client DOB" defaultValue={@getClientField 'dob'} />
+            </div>
+            <div className="form-group">
+              <label>Social Security #</label>
+              <input type="text" className="form-control" name="ssn" placeholder="Enter Client SSN" defaultValue={@getClientField 'ssn'} />
+            </div>
+            <div className="form-group">
+              <label>Current Status</label>
+              <select className="form-control" name="stage" defaultValue={@getClientField 'stage'}>
+                <option value="unknown">Unknown</option>
+                <option value="emergent">Emergent</option>
+                <option value="homeless">Homeless</option>
+                <option value="rehab">In Rehab</option>
+              </select>
+            </div>
+            <a href="javascript:;" className="btn btn-primary" onClick={@handleSubmit}>Submit</a>
+          </form>
+      }
+    </div>
+
 ClientSummary = React.createClass
 
   getInitialState: ->

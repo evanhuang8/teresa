@@ -26,6 +26,17 @@ module.exports =
     yield return
     return
 
+  update: () ->
+    id = @request.query.id
+    client = yield Client.findById id
+    if not client?
+      @status = 404
+      return
+    @render 'client/edit',
+      client: client
+    yield return
+    return
+
   create: () ->
     params = @request.body
     fields = [
@@ -45,8 +56,7 @@ module.exports =
     @body = 
       status: 'OK'
       obj: client
-    yield
-    return
+    yield return
 
   edit: () ->
     fields = [
