@@ -1,3 +1,4 @@
+moment = require 'moment-timezone'
 db = require '../db'
 Client = db.model 'Client'
 Checkup = db.model 'Checkup'
@@ -69,6 +70,7 @@ module.exports =
       task = yield queue.add
         name: 'general'
         params:
+          type: 'scheduleCheckup'
           id: checkup.id
         eta: start.clone()
       checkup.task = task.id
