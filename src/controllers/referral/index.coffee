@@ -56,6 +56,11 @@ module.exports =
     yield return
     return
 
+  add: () ->
+    @render 'referral/add'
+    yield return
+    return
+
   message: () ->
     params = @request.body
     from = params.From
