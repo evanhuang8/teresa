@@ -1,32 +1,19 @@
 extend ../layout
 
-+input(type, id, label, placeholder, options)
-  div.form-group
-    label(for=id)=label
-    case type
-      when 'textarea'
-        textarea.form-control(id=id)
-      when 'select'
-        select.form-control(id=id)
-          for o in options
-            option o
-      when 'radio'
-        div.form-check
-          if block
-            block
-      when 'check'
-        div.form-check
-          if block
-            block
-      default
-        input.form-control(type=type, id=id, placeholder=placeholder)
-
-+input-check(type, name, id, label)
-  label.form-check-label
-    input.form-check-input(type=type, name=name, id=id)
-      if block
-        block
-
 block content
   form
-    +input('textarea', 'test', 'Textarea Label', 'Placeholder')
+    
+    +input('email', 'test', 'Email Label', 'Placeholder', false)
+    +input('password', 'test', 'Pass Label', 'Placeholder', false)
+    +input('text', 'test', 'Text Label', 'Placeholder', false)
+    +input('number', 'test', 'Number Label', 'Placeholder', false)
+
+    +input('textarea', 'test', 'Textarea Label', 'Placeholder', false)
+
+    +input('select', 'select', 'Label', 'Bloop', ['one', 'two', 'three'])
+
+    +input-check-group('Radio')
+      - var name = 'optionsRadios'
+      +input-check('radio', name, 'Radio', 'value1')
+      +input-check('radio', name, 'Radio', 'value2')
+      +input-check('radio', name, 'Radio', 'value3')

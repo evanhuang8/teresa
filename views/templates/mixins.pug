@@ -3,3 +3,30 @@ mixin l-section(color)
     div.container
       if block
         block
+
+//- FORMS
+mixin input(type, id, label, placeholder, options)
+  div.form-group
+    label(for=id)=label
+    case type
+      when 'textarea'
+        textarea.form-control(id=id)
+      when 'select'
+        select.form-control(id=id)
+          if options
+            for o in options
+              option=o
+      default
+        input.form-control(type=type, id=id, placeholder=placeholder)
+
+mixin input-check-group(label)
+  fieldset.form-group
+    legend=label
+    if block
+      block
+
+mixin input-check(type, name, id, label)
+  div.form-check
+    label.form-check-label
+      input.form-check-input(type=type, name=name, id=value, value=value)
+      | #{label}
