@@ -5,7 +5,9 @@ db = require '../../db'
 Client = db.model 'Client'
 Service = db.model 'Service'
 Referral = db.model 'Referral'
+Organization = db.model 'Organization'
 
+queue = require '../../tasks/queue'
 handler = require('./handler').getMessageHandler()
 
 Interpreter = require '../../utils/interpreter'
@@ -72,7 +74,7 @@ createReferral = (client, body) ->
     clientId: client.id
   return referral
 
-module.exports = 
+module.exports =
 
   all: () ->
     @render 'referral/all',
@@ -134,6 +136,79 @@ module.exports =
       status: 'OK'
       referral: referral
     return
+
+  confirm: () ->
+    id = @request.body.referral
+    if not id?
+      @body =
+        status: 'FAIL'
+        message: 'You must include a referral id'
+      return
+    referral = yield Referral.findOne
+      include: [
+        model: Client
+        as: 'client'
+      ,
+        model: Organization
+        as: 'referee'
+      ]
+      where:
+        id: id
+    if not referral?
+      @body =
+        status: 'FAIL'
+        message: 'The referral does not exist'
+      return
+    if referral.isConfirmed
+      @body =
+        status: 'FAIL'
+        message: 'The referral is already confirmed'
+      return
+    referral.isConfirmed = true
+    yield referral.save()
+    client = referral.client
+    if client.phone?
+      message = 'Hi'
+      if client.firstName?
+        message += " #{client.firstName}"
+      message += "! Your service at #{referral.referee.name} has been confirmed."
+      task = yield queue.add
+        name: 'general'
+        params:
+          type: 'sendMessage'
+          to: client.phone
+          body: message
+        eta: moment()
+    @body =
+      status: 'OK'
+      referral: referral
+    return
+
+  fetch: () ->
+    if not @passport.user?
+      @status = 403
+    referrals = yield Referral.findAll
+      include: [
+        model: Client
+        as: 'client'
+      ,
+        model: Service
+        as: 'service'
+      ,
+        model: Organization
+        as: 'referer'
+      ]
+      where:
+        refereeId: @passport.user.organizationId
+        isCanceled: false
+      order: [
+        ['isConfirmed', 'ASC']
+        ['createdAt', 'ASC']
+      ]
+    @body =
+      status: 'OK'
+      referrals: referrals
+    yield return
 
   message: () ->
     params = @request.body
