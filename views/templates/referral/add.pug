@@ -3,8 +3,13 @@ extend ../layout
 block content
   div.card
     div.card-block
-      h1.card-title Add New Service
+      h1.card-title Add Referral
+      div.card
+        div.card-block
+          h5.card-title Summary of Service
+      div.card
+        div.card-block
+          h5.card-title Summary of Client
       form
-        +input('text', 'referralOptionA', 'Service Name', false)
-        +input('select', 'referralOptionA', 'Service Name', false, ['Food', 'Shelter', 'Housing', 'Medical', 'Training', 'Funding'])
+        +input('textarea', 'referralOptionA', 'Referral Options...', false)
         button.btn.btn-primary(type="submit") Create Referral

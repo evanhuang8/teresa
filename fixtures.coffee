@@ -14,7 +14,7 @@ co ->
   Organization = db.model 'Organization'
   User = db.model 'User'
   Client = db.model 'Client'
-  ShelterService = db.model 'ShelterService'
+  Service = db.model 'Service'
 
   community = yield Community.create
     name: 'St. Louis CoC'
@@ -59,22 +59,25 @@ co ->
   for i in [0...7]
     hours.push
       always: true
-  shelterA = yield ShelterService.create
+  shelterA = yield Service.create
     name: 'St. Patrick Shelters'
+    type: 'housing'
     description: 'Dope crib'
     businessHours: hours
     maxCapacity: 200
     openCapacity: 150
     organizationId: orgA.id
-  shelterB = yield ShelterService.create
+  shelterB = yield Service.create
     name: 'Mercy Shelters'
+    type: 'job'
     description: 'Not so much good'
     businessHours: hours
     maxCapacity: 100
     openCapacity: 50
     organizationId: orgB.id
-  shelterC = yield ShelterService.create
+  shelterC = yield Service.create
     name: 'My Crib'
+    type: 'food'
     description: 'Great'
     businessHours: hours
     maxCapacity: 100
