@@ -1,12 +1,10 @@
 ###
-ShelterIntent
+Intent
 ###
-
-moment = require 'moment-timezone'
 
 module.exports = (sequelize, DataTypes) ->
 
-  ShelterIntent = sequelize.define 'ShelterIntent', 
+  Intent = sequelize.define 'Intent', 
     expiresAt: 
       type: DataTypes.DATE
       allowNull: false
@@ -18,10 +16,12 @@ module.exports = (sequelize, DataTypes) ->
     timestamps: true
     paranoid: true
     associate: (models) ->
-      ShelterIntent.belongsTo models.Client, 
+      Intent.belongsTo models.Client, 
         as: 'client'
-      ShelterIntent.belongsTo models.ShelterService,
-        as: 'shelter'
+      Intent.belongsTo models.Service,
+        as: 'service'
+      Intent.belongsTo models.Referral,
+        as: 'referral'
       return
 
-  return ShelterIntent
+  return Intent

@@ -1,12 +1,26 @@
 ###
-ShelterService
+Service
 ###
 
 moment = require 'moment-timezone'
 
+SERVICE_TYPES = [
+  'shelter'
+  'health'
+  'housing'
+  'job'
+  'food'
+  'funding'
+]
+
 module.exports = (sequelize, DataTypes) ->
 
-  ShelterService = sequelize.define 'ShelterService', 
+  Service = sequelize.define 'Service', 
+    type: 
+      type: DataTypes.STRING
+      allowNull: false
+      validate:
+        isIn: [SERVICE_TYPES]
     name: 
       type: DataTypes.STRING
       allowNull: false
@@ -49,11 +63,15 @@ module.exports = (sequelize, DataTypes) ->
       allowNull: false
       validate:
         min: 0
+    isConfirmationRequired: 
+      type: DataTypes.BOOLEAN
+      defaultValue: false
+    refreshedAt: DataTypes.DATE
   ,
     timestamps: true
     paranoid: true
     associate: (models) ->
-      ShelterService.belongsTo models.Organization,
+      Service.belongsTo models.Organization,
         as: 'organization'
       return
     classMethod: 
@@ -69,4 +87,4 @@ module.exports = (sequelize, DataTypes) ->
           end.add 1, 'day'
         return start < now and now < end
 
-  return ShelterService
+  return Service

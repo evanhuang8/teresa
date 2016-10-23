@@ -3,36 +3,35 @@ Referral handler factory
 ###
 
 db = require '../../db'
-Referral = db.model 'Referral'
 Client = db.model 'Client'
 Organization = db.model 'Organization'
+Referral = db.model 'Referral'
+Service = db.model 'Service'
+Intent = db.model 'Intent'
+
 MessageHandler = require '../../handlers/message'
+messenger = require './messenger'
 
-ShelterService = db.model 'ShelterService'
+LocationUtils = require '../../utils/location'
+ServiceUtils = require '../../controllers/service/utils'
 
-locationUtils = require '../../utils/location'
-shelterUtils = require '../../controllers/shelter/utils'
+SERVICE_TYPES = [
+  'shelter'
+  'health'
+  'housing'
+  'job'
+  'food'
+  'funding'
+]
 
-INTENT_TYPES = ['shelter', 'housing', 'health', 'finances']
-
-notCheckup = (referral) ->
-  return not referral.isCheckup or referral.checkupStatus?
-
-findAndSelectShelter = (referral) ->
-  nearShelters = yield shelterUtils.nearestShelters
+findServices = (referral) ->
+  services = yield ServiceUtils.nearestServies
+    type: referral.type
     lat: referral.lat
     lng: referral.lng
     isAvailable: true
-  shelter = null
-  if nearShelters.length > 0
-    shelter = nearShelters[0]
-  return shelter
-
-getShelter = (referral) ->
-  shelter = yield ShelterService.findOne
-    where:
-      id: referral.serviceId
-  return shelter
+    isOpen: true
+  return services
 
 module.exports = 
 
@@ -50,6 +49,9 @@ module.exports =
         ,
           model: Organization
           as: 'referee'
+        ,
+          model: Service
+          as: 'service'
         ]
         where:
           id: id
@@ -59,159 +61,139 @@ module.exports =
 
     # Disclaimer
     handler.addHook (handler, body) ->
-      return not handler.data.referral? or handler.data.referral.isComplete
+      referral = handler.data.referral
+      return not referral? or referral.isConnection
     , (handler) ->
-      handler.reply 'You have reached the Teresa system.'
+      handler.reply 'You have reached the Teresa system. Message & data rates may apply.'
       yield
       return
 
     ###
-    Initialize
+    Initialize & type
     ###
     handler.addHook (handler, body) ->
       referral = handler.data.referral
-      return referral? and not referral.isInitialized
+      return not referral.isInitialized
     , (handler, body) ->
       referral = handler.data.referral
       referer = referral.referer
       client = referral.client
-      if referral.isCheckup
-        message = 'Hi'
-        if client.firstName?
-          message += " #{client.firstName}"
-        message += ', '
-        if referer?
-          message += " this is #{referer.name} checking in on you."
-        else
-          message += ' we are wondering how you are doing.'
-        message += ' Are you:\n\n1: doing OK\n2: Worried about losing your home\n3:Lost your home\n\nReply 1, 2 or 3'
-      else if not referral.type? and not referral.address?
-        message = 'Do you need help with anything today?\n\n1: Shelter\n2: Health\n3: Housing\n4: Job/Money\n5: Talk to someone\nPlease reply 1, 2, 3, 4 or 5'
-      else if referral.type? and not referral.address?
-        message = 'Where are you right now? Please reply with a street address or an intersection (ex: Main Street and North Ave.)'
-      else if referral.type? and referral.address? and referral.lat? and referral.lng?
-        shelter = yield findAndSelectShelter referral
-        if shelter?
-          message = "#{shelter.name} has a bed available. Would you like to reserve it? Please reply yes or no."
-          referral.serviceId = shelter.id
-          referral.refereeId = shelter.organizationId
-        else
-          message = 'We could not find a shelter near you with available beds. Please call this number to reach a support line.'
+      message = messenger.menu()
       handler.reply message 
       referral.isInitialized = true
       yield referral.save()
       return
 
     ###
-    Checkup
+    Select type
     ###
     handler.addHook (handler, body) ->
       referral = handler.data.referral
-      return referral.isCheckup and not referral.checkupStatus?
+      return referral.isInitialized and not referral.type?
     , (handler, body) ->
-      referral = handler.data.referral
-      client = referral.client
-      values = [1, 2, 3]
-      if parseInt(body) not in values
-        handler.reply 'Sorry, we didn\'t get that. If you are doing OK, reply 1. If you are worried about loosing you home, reply 2. If you lost your home, reply 3.'
+      values = [1..7]
+      value = parseInt body
+      if value not in values
+        handler.reply messenger.parseErrorMenu()
         return
-      referral.checkupStatus = parseInt(body)
+      if value is 7
+        referral.isConnection = true
+        yield referral.save()
+        # FIXME: out going call with 211
+        return
+      referral.type = types[value - 1]
       yield referral.save()
-      switch referral.checkupStatus
-        when 1
-          handler.reply 'That is great! If you are worried about losing your home, you can always call this number to get help.'
-          client.stage = 'ok'
-        when 2
-          handler.reply 'We will now connect you with a preventative service. You will receive a call from this number in a few seconds.'
-          client.stage = 'emergent'
-        when 3
-          handler.reply 'Do you need help with anything today?\n\n1: Shelter\n2: Health\n3: Housing\n4: Job/Money\n5: Talk to someone\nPlease reply 1, 2, 3, 4 or 5'
-          client.stage = 'homeless'
-      yield client.save()
+      handler.reply messenger.address()
       return
 
     ###
-    Main
+    Location
     ###
-    
-    # No type yet
     handler.addHook (handler, body) ->
       referral = handler.data.referral
-      return notCheckup(referral) and not referral.type?
-    , (handler, body) ->
-      values = [1, 2, 3, 4, 5]
-      if parseInt(body) not in values
-        handler.reply 'Sorry, we didn\'t get that. If you are doing OK, reply 1. If you are worried about loosing you home, reply 2. If you lost your home, reply 3.'
-        return
-      referralTypes =
-        1: 'shelter'
-        2: 'housing'
-        3: 'health'
-        4: 'finances'
-        5: 'other'
-      referral.type = referralTypes[parseInt(body)]
-      yield referral.save()
-      handler.reply 'Where are you right now? Please reply with a street address or an intersection (ex: Main Street and North Ave.)'
-      return
-
-    # Referral has type but no location
-    handler.addHook (handler, body) ->
-      referral = handler.data.referral
-      return notCheckup(referral) and referral.type? and not referral.address?
+      return referral.type? and not referral.address?
     , (handler, body) ->
       referral = handler.data.referral
-      if not body? or body.trim() is ''
-        handler.reply 'Please send your location.'
+      if body is ''
+        handler.reply messenger.parseErrorAddress()
         return
-      result = yield locationUtils.geocode
+      result = yield LocationUtils.geocode
         keyword: body
       if not (result? and result.lat? and result.lng?)
-        handler.reply 'Sorry, we couldn\'t find your location. Please enter an intersection near you (example: \'Washington Ave. and McPherson Ave.\')'
+        handler.reply messenger.parseErrorAddress()
         return
+      # Update status
       referral.address = result.address
       referral.lat = result.lat
       referral.lng = result.lng
       yield referral.save()
-      shelter = yield findAndSelectShelter referral
-      if shelter?
-        message = "#{shelter.name} has a bed available. Would you like to reserve it? Please reply yes or no."
-        referral.serviceId = shelter.id
-        referral.refereeId = shelter.organizationId
+      services = yield findServices referral
+      message = ''
+      if services.length > 0
+        service = services[0]
+        organization = yield Organization.findById service.organizationId
+        directions = yield LocationUtils.directions
+          origin: 
+            lat: referral.lat
+            lng: referral.lng
+          destination:
+            lat: organization.lat
+            lng: organization.lng
+        message = messenger.referral service, directions
+        # Confirm intent
+        intent = true
+        if service.maxCapacity > 0
+          intent = false
+          for i in [0...3] # Try 3 times
+            try
+              intent = yield ServiceUtils.reserve
+                client: referral.client
+                referral: referral
+                service: service
+              break
+            catch err
+              true
+        if intent
+          referral.serviceId = shelter.id
+          referral.refereeId = shelter.organizationId
+          message = messenger.referral service, directions, intent isnt true
+        else
+          referral.isUnavailable = true
+          message = messenger.noReferrals()
       else
-        message = 'We could not find a shelter near you with available beds. Please call this number to reach a support line.'
+        referral.isUnavailable = true
+        message = messenger.noReferrals()
       yield referral.save()
       handler.reply message
       return
 
-    # Has type and location
+    ###
+    Confirm referral
+    ###
     handler.addHook (handler, body) ->
       referral = handler.data.referral
-      return notCheckup(referral) and referral.serviceId? and not referral.isReserved?
+      return referral.service? and not referral.isReserved?
     , (handler, body) ->
       referral = handler.data.referral
       referee = referral.referee
       if not handler.isYesNo body
-        handler.reply 'Sorry, we didn\'t get that. Please reply yes to reserve or no to not reserve.'
+        handler.reply messenger.parseErrorYesNo()
         return
-      if handler.isYes body
-        shelter = yield getShelter referral
-        result = yield shelterUtils.reserve
-          client: referral.client
-          shelter: shelter
-          origin:
-            lat: referral.lat
-            lng: referral.lng
-          destination:
-            lat: referee.lat
-            lng: referee.lng
-        directions = result[1]
-        minutes = Math.round(directions.duration / 60)
-        stepsString = directions.steps.join '\n'
-        message = "#{shelter.name} is a #{minutes} minute walk away. Directions:\n\n#{stepsString}"
-        referral.isReserved = true
+      isReserved = handler.isYes body
+      referral.isReserved = isReserved
+      message = ''
+      if isReserved
+        # FIXME: Cancel the intent expiration
+        service = referral.service
+        if services.isConfirmationRequired
+          # FIXME: send message to notify service provider
+        else
+          referral.isConfirmed = true
       else
-        message 'OK, you have not reserved your bed.'
-        referral.isReserved = false
+        referral.isCanceled = true
+        referral.canceledAt = new Date()
+        message = messenger.canceled()
+      yield referral.save()
       handler.reply message
       yield referral.save()
       return

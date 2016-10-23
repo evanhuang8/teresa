@@ -8,17 +8,18 @@ module.exports = (sequelize, DataTypes) ->
     isInitialized:
       type: DataTypes.BOOLEAN
       defaultValue: false
-    isCheckup:
+    isConnection:
       type: DataTypes.BOOLEAN
       defaultValue: false
-    checkupStatus: DataTypes.INTEGER
+    # Current client state
     address: DataTypes.STRING
     lat: DataTypes.DOUBLE
     lng: DataTypes.DOUBLE
-    type: DataTypes.STRING # Service Type
-    serviceId: DataTypes.INTEGER
-    isReserved:
+    # Control states
+    isUnavailable: 
       type: DataTypes.BOOLEAN
+      defaultValue: false
+    isReserved: DataTypes.BOOLEAN
     isConfirmed:
       type: DataTypes.BOOLEAN
       defaultValue: false
@@ -38,6 +39,8 @@ module.exports = (sequelize, DataTypes) ->
     associate: (models) ->
       Referral.belongsTo models.Client, 
         as: 'client'
+      Referral.belongsTo models.Service,
+        as: 'service'
       Referral.belongsTo models.Organization, 
         as: 'referee'
       Referral.belongsTo models.Organization, 
