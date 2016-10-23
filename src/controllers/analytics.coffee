@@ -88,7 +88,44 @@ averageTimeToHousing = (opts) ->
   result = yield db.client.query query, 
     type: sequelize.QueryTypes.SELECT
   atth = result[0]?.atth
-  return atth
+  query = "
+    SELECT COUNT(*) AS total
+    FROM
+      (SELECT TIMESTAMPDIFF(DAY, Clients.createdAt, Referrals.completedAt) AS tth,
+              Clients.createdAt,
+              Referrals.completedAt
+       FROM Referrals
+       INNER JOIN Clients ON Referrals.clientId = Clients.id
+       WHERE type = 'housing' "
+  if opts.orgId?
+    query += " AND clientId IN (select clientId from Referrals where refereeId = #{opts.orgId} group by clientId) "
+  query += "
+    AND isComplete = 1) AS qa WHERE qa.tth <= 30
+  "
+  result = yield db.client.query query, 
+    type: sequelize.QueryTypes.SELECT
+  success = result[0]?.total
+  query = "
+    SELECT COUNT(*) AS total
+    FROM
+      (SELECT TIMESTAMPDIFF(DAY, Clients.createdAt, Referrals.completedAt) AS tth,
+              Clients.createdAt,
+              Referrals.completedAt
+       FROM Referrals
+       INNER JOIN Clients ON Referrals.clientId = Clients.id
+       WHERE type = 'housing' "
+  if opts.orgId?
+    query += " AND clientId IN (select clientId from Referrals where refereeId = #{opts.orgId} group by clientId) "
+  query += "
+    AND isComplete = 1) AS qa
+  "
+  result = yield db.client.query query, 
+    type: sequelize.QueryTypes.SELECT
+  total = result[0]?.total
+  rate = 0
+  if total > 0
+    rate = success / total
+  return [atth, rate]
 
 module.exports = 
 
@@ -103,9 +140,10 @@ module.exports =
   data_costs: ->
     orgs = yield averageCostPerClient {}
     for org in orgs
-      atth = yield averageTimeToHousing
+      [atth, rate] = yield averageTimeToHousing
         orgId: org.id
       org.dataValues.atth = atth
+      org.dataValues.rate = rate
     orgs = _.sortBy orgs, (org) -> org.dataValues.atth
     @body = 
       status: 'OK'

@@ -54,15 +54,15 @@ AnalyticsCanvas = React.createClass
               <div className="row card-text">
                 <div className="col-md-4">                
                   <h6>
-                    ATTH
+                    H30P
                   </h6>
-                  <h3>{if org.atth? then org.atth.toFixed(0) else '?'}D</h3>
+                  <h3>{if org.rate? then (org.rate * 100).toFixed(0) else '0'}%</h3>
                 </div>
                 <div className="col-md-4">                
                   <h6>
-                    CoP
+                    ATTH
                   </h6>
-                  <h3>${org.avgCost.toFixed(2)}</h3>
+                  <h3>{if org.atth? then org.atth.toFixed(0) else '?'}D</h3>
                 </div>
                 <div className="col-md-4">                
                   <h6>

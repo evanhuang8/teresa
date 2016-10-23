@@ -111,7 +111,7 @@ co ->
   initials = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'I', 'Z']
   stages = ['unknown', 'emergent', 'homeless', 'rehab']
   for i in [0..2000]
-    delta = _.sample [30..90]
+    delta = _.sample [15..70]
     createdAt = new Date moment().subtract(delta, 'days').valueOf()
     clients.push
       firstName: faker.name.firstName()
