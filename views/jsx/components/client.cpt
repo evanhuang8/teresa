@@ -64,34 +64,52 @@ ClientForm = React.createClass
         if not @props.editing or @state.client?
           client = @state.client
           <form ref="clientForm">
-            <div className="form-group">
-              <label>First Name</label>
-              <input type="text" className="form-control" name="firstName" placeholder="Enter Client First Name" defaultValue={@getClientField 'firstName'} />
+            <div className="row">
+              <div className="col-sm-6">
+                <div className="form-group">
+                  <label>First Name</label>
+                  <input type="text" className="form-control" name="firstName" placeholder="Enter Client First Name" defaultValue={@getClientField 'firstName'} />
+                </div>
+              </div>
+              <div className="col-sm-6">
+                <div className="form-group">
+                  <label>Last Name</label>
+                  <input type="text" className="form-control" name="lastName" placeholder="Enter Client Last Name" defaultValue={@getClientField 'lastName'} />
+                </div>
+              </div>
             </div>
-            <div className="form-group">
-              <label>Last Name</label>
-              <input type="text" className="form-control" name="lastName" placeholder="Enter Client Last Name" defaultValue={@getClientField 'lastName'} />
+            <div className="row">
+              <div className="col-sm-6">
+                <div className="form-group">
+                  <label>Phone Number</label>
+                  <input type="text" className="form-control" name="phone" placeholder="Enter Client Phone" defaultValue={@getClientField 'phone'} />
+                </div>
+              </div>
+              <div className="col-sm-6">
+                <div className="form-group">
+                  <label>Date of Birth (mm/dd/yyyy)</label>
+                  <input type="date" className="form-control" name="dob" placeholder="Enter Client DOB" defaultValue={@getClientField 'dob'} />
+                </div>
+              </div>
             </div>
-            <div className="form-group">
-              <label>Phone Number</label>
-              <input type="text" className="form-control" name="phone" placeholder="Enter Client Phone" defaultValue={@getClientField 'phone'} />
-            </div>
-            <div className="form-group">
-              <label>Date of Birth (mm/dd/yyyy)</label>
-              <input type="date" className="form-control" name="dob" placeholder="Enter Client DOB" defaultValue={@getClientField 'dob'} />
-            </div>
-            <div className="form-group">
-              <label>Social Security #</label>
-              <input type="text" className="form-control" name="ssn" placeholder="Enter Client SSN" defaultValue={@getClientField 'ssn'} />
-            </div>
-            <div className="form-group">
-              <label>Current Status</label>
-              <select className="form-control" name="stage" defaultValue={@getClientField 'stage'} onChange={@updateClientStage}>
-                <option value="unknown">Unknown</option>
-                <option value="emergent">Emergent</option>
-                <option value="homeless">Homeless</option>
-                <option value="rehab">In Rehab</option>
-              </select>
+            <div className="row">
+              <div className="col-sm-6">
+                <div className="form-group">
+                  <label>Social Security #</label>
+                  <input type="text" className="form-control" name="ssn" placeholder="Enter Client SSN" defaultValue={@getClientField 'ssn'} />
+                </div>
+              </div>
+              <div className="col-sm-6">
+                <div className="form-group">
+                  <label>Current Status</label>
+                  <select className="form-control" name="stage" defaultValue={@getClientField 'stage'} onChange={@updateClientStage}>
+                    <option value="unknown">Unknown</option>
+                    <option value="emergent">Emergent</option>
+                    <option value="homeless">Homeless</option>
+                    <option value="rehab">In Rehab</option>
+                  </select>
+                </div>
+              </div>
             </div>
             {
               if not @props.editing and @state.stage is 'emergent'

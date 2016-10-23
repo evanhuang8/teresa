@@ -48,15 +48,19 @@ html(lang="en", class=isLogin ? 'bg-grad-green' : '')
             div.navigation--subnavigation.bg-grey-lighter
               div.container
                 div.row
-                  ul.nav.nav-pills
-                    li.nav-item
-                      a.nav-link(href="/organization", class=endpoint == '/' ? 'active' : '') Overview
-                    li.nav-item
-                      a.nav-link(href="/referral/all", class=endpoint == '/referral' ? 'active' : '') Referrals
-                    li.nav-item
-                      a.nav-link(href="/service/all", class=endpoint == '/service' ? 'active' : '') Services
-                    li.nav-item
-                      a.nav-link(href="/client/list", class=endpoint == '/client' ? 'active' : '') Clients
+                  nav.navbar
+                    ul.nav.nav-pills
+                      li.nav-item
+                        a.nav-link(href="/organization", class=endpoint == '/' ? 'active' : '') Overview
+                      li.nav-item
+                        a.nav-link(href="/referral/all", class=endpoint == '/referral' ? 'active' : '') Referrals
+                      li.nav-item
+                        a.nav-link(href="/service/all", class=endpoint == '/service' ? 'active' : '') Services
+                      li.nav-item
+                        a.nav-link(href="/client/list", class=endpoint == '/client' ? 'active' : '') Clients
+                    form.form-inline.float-xs-right(action='/client/list')
+                      input.form-control(type="text", name="keyword", placeholder="Search Clients")
+                      button.btn.btn-outline-success(type="submit") Search
         block content
           +l-section()
             h2 Organization Overview

@@ -23,6 +23,14 @@ ClientList = React.createClass
       return
     return
 
+  clearKeyword: ->
+    @setState
+      page: 0
+      keyword: null
+    , =>
+      @fetchClients()
+    return
+
   handlePageChange: (page) ->
     @setState
       page: page
@@ -37,6 +45,24 @@ ClientList = React.createClass
 
   render: ->
     <div className="container">
+      <div className="row">
+        <div className="col-sm-10" style={paddingTop: '10px'}>
+          {
+            if @state.keyword?
+              "Searching For \'#{@state.keyword}\' - "
+          }
+          {
+            if @state.keyword?
+              <a href="javascript:;" onClick={@clearKeyword}>clear search</a>
+          }
+        </div>
+        <div className="col-sm-2">
+          <a className="btn btn-block btn-success" href="/client/add">
+            Add A Client
+          </a>
+        </div>
+        <br /><br /><br />
+      </div>
       {
         if @state.clients? and @state.clients.length > 0
           <div className="row">
