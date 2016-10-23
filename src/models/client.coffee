@@ -2,6 +2,7 @@
 Client model
 ###
 
+CLIENT_STAGE_OK = 'ok'
 CLIENT_STAGE_UNKNOWN = 'unknown'
 CLIENT_STAGE_EMERGENT = 'emergent'
 CLIENT_STAGE_HOMELSS = 'homeless'
@@ -30,6 +31,7 @@ module.exports = (sequelize, DataTypes) ->
       validate: 
         isIn: [
           [
+            CLIENT_STAGE_OK
             CLIENT_STAGE_UNKNOWN
             CLIENT_STAGE_EMERGENT
             CLIENT_STAGE_HOMELSS

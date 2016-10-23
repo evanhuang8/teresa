@@ -5,36 +5,34 @@ Referral model
 module.exports = (sequelize, DataTypes) ->
 
   Referral = sequelize.define 'Referral', 
+    isInitialized:
+      type: DataTypes.BOOLEAN
+      defaultValue: false
     isCheckup:
       type: DataTypes.BOOLEAN
       defaultValue: false
-    checkupStatus:
-      type: DataTypes.INTEGER
-    type:
-      type: DataTypes.INTEGER
-    address:
-      type: DataTypes.STRING
-    lat:
-      type: DataTypes.DOUBLE
-    lng:
-      type: DataTypes.DOUBLE
+    checkupStatus: DataTypes.INTEGER
+    type: DataTypes.STRING
+    serviceId: DataTypes.INTEGER # key
+    address: DataTypes.STRING
+    lat: DataTypes.DOUBLE
+    lng: DataTypes.DOUBLE
+    isReserved:
+      type: DataTypes.BOOLEAN
+      defaultValue: false
     isConfirmed:
       type: DataTypes.BOOLEAN
       defaultValue: false
-    start:
-      type: DataTypes.DATE
-    end:
-      type: DataTypes.DATE
+    start: DataTypes.DATE
+    end: DataTypes.DATE
     isComplete:
       type: DataTypes.BOOLEAN
       defaultValue: false
-    completedAt:
-      type: DataTypes.DATE
+    completedAt: DataTypes.DATE
     isCanceled:
       type: DataTypes.BOOLEAN
       defaultValue: false
-    canceledAt:
-      type: DataTypes.DATE
+    canceledAt: DataTypes.DATE
   ,
     timestamps: true
     paranoid: true
