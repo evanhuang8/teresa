@@ -127,8 +127,9 @@ module.exports =
       referral = handler.data.referral
       return not referral? or referral.isConnection
     , (handler) ->
-      handler.reply 'You have reached the Teresa system. Message & data rates may apply.'
+      handler.reply 'You have reached the Clover system. Message & data rates may apply.'
       yield return
+      return
 
     ###
     Checkup status

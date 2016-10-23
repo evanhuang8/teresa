@@ -13,20 +13,24 @@ CURD = require '../utils/curd'
 module.exports = 
 
   index: () ->
-    @render 'client/index'
+    @render 'client/index', 
+      user: @passport.user
     yield return
 
   list: () ->
-    @render 'client/list'
+    @render 'client/list', 
+      user: @passport.user
     yield return
 
   all: () ->
-    @render 'client/all'
+    @render 'client/all', 
+      user: @passport.user
     yield return
     return
 
   add: () ->
-    @render 'client/add'
+    @render 'client/add', 
+      user: @passport.user
     yield return
     return
 

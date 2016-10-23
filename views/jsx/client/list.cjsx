@@ -41,21 +41,28 @@ ClientListItem = React.createClass
     return state
 
   render: ->
-    <div className="row">
-      <div className="col-md-6">
-        {@props.client.firstName}
-        {
-          if @props.client.middleName?
-            " #{@props.client.middleName}"
-        }
-        {" #{@props.client.lastName}"}
-      </div>
-      <div className="col-md-6 text-right">
-        <a href="javascript:;">View Details</a>
-        <a href="javascript:;"> Edit</a>
-        <a href="/referral/add?client=#{@props.client.id}"> Refer</a>
-      </div>
+    <div>
+      <h1>All Clients</h1>
     </div>
+    <ul className="list-group">
+      <li className="list-group-item">
+        <div className="row">
+          <div className="col-md-6">
+            {@props.client.firstName}
+            {
+              if @props.client.middleName?
+                " #{@props.client.middleName}."
+            }
+            {" #{@props.client.lastName}"}
+          </div>
+          <div className="col-md-6 text-right">
+            <a className="btn btn-sm btn-secondary" href="javascript:;">View Details</a>
+            <a className="btn btn-sm btn-secondary" href="javascript:;"> Edit</a>
+            <a className="btn btn-sm btn-success" href="/referral/add?client=#{@props.client.id}"> Refer</a>
+          </div>
+        </div>
+      </li>
+    </ul>
 
 @Teresa.client.list = 
 

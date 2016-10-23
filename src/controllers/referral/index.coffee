@@ -75,7 +75,8 @@ createReferral = (client, body) ->
 module.exports = 
 
   all: () ->
-    @render 'referral/all'
+    @render 'referral/all',
+      user: @passport.user
     yield return
 
   add: () ->
@@ -83,6 +84,11 @@ module.exports =
     client = yield Client.findById id
     @render 'referral/add',
       client: client
+      user: @passport.user
+    yield return
+
+  refer: () ->
+    @render 'referral/refer'
     yield return
 
   create: () ->

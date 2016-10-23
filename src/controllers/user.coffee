@@ -5,7 +5,8 @@ User = db.model 'User'
 
 module.exports = 
   index: () ->
-    @render 'user/index'
+    @render 'user/index', 
+      user: @passport.user
     yield return
     return
 

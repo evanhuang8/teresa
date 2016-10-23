@@ -1,5 +1,8 @@
 include mixins
 
+block vars
+  - var endpoint = '/'
+
 doctype html
 html(lang="en")
   head
@@ -7,66 +10,56 @@ html(lang="en")
       block title
         | Teresa HIMS
     meta(name="viewport", content="width=device-width, initial-scale=1, shrink-to-fit=no")
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i")
     link(rel="stylesheet", href=`${staticPrefix}css/vendor.css`)
     link(rel="stylesheet", href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css")
     link(rel="stylesheet", href=`${staticPrefix}css/teresa.css`)
   body
     block body
       div#wrapper-top
-        nav.navbar.navbar-full.navbar-dark.bg-primary
-          a.navbar-brand(href="/")
-            | Teresa
-          div.nav.navbar-nav.pull-right
-            if user
-              //-span.nav-item.dropdown
-                a.nav-link.dropdown-toggle(href="#", data-toggle="dropdown")
-                  span.fa.fa-gears
-                  |  Analytics
-                div.dropdown-menu
-                  a.dropdown-item(href="/analytics")
-                    span.fa.fa-pie-chart 
-                    |  Overview
-                  a.dropdown-item(href="/analytics/engagement")
-                    span.fa.fa-line-chart
-                    |  Engagement
-                  a.dropdown-item(href="/analytics/risks")
-                    span.fa.fa-cubes
-                    |  Risks/Triage
-              //-a.nav-item.nav-link(href="/data") 
-                span.fa.fa-tasks
-                |  Data
-              a.nav-item.nav-link(href="/logout") 
-                span.fa.fa-sign-out
-                |  Logout
-            else
-              a.nav-item.nav-link(href="/login") 
-                span.fa.fa-user
-                |  Login
-        div#wrapper-content
-          block header
-            +l-section('salmon')
-              div
-                a(href="/community") St. Louis City CoC
-            div(style="background-image:url('http://www.fillmurray.com/1024/150'); background-size:cover;")
+        nav.navbar.navbar-full.navbar-dark
+          div.container
+            a.navbar-brand(href="/")
+              img(src=`${staticPrefix}images/logo.png`, style="height:28px;")
+            div.nav.navbar-nav.pull-right
+              if user
+                a.nav-item.btn.btn-secondary(href="/logout") 
+                  span.fa.fa-sign-out
+                  |  Logout
+              else
+                a.nav-item.nav-link(href="/login") 
+                  span.fa.fa-user
+                  |  Login
+      div#wrapper-content
+        block header
+          if user
+            div.navigation--breadcrumb.bg-grad-grey-lighter
               div.container
                 div.row
-                  div.col-md-8
-                    h1 {Organization Name}
-                    h2 {Organization Mission}
-                  div.col-md-4.text-right
-                    img(src="http://www.fillmurray.com/150/150")
-            +l-section('aquamarine')
-              div.row
-                ul.nav.nav-pills
-                  li.nav-item
-                    a.nav-link(href="/organization") Activity
-                  li.nav-item
-                    a.nav-link(href="/referral/all") Service
-                  li.nav-item
-                    a.nav-link.active(href="/user/all") Providers
-                  li.nav-item
-                    a.nav-link(href="/client/all") Clients
-          block content
+                  a(href="/community") St. Louis City Continuum of Care
+            div
+              div.container
+                div.row
+                  div.col-md-1
+                    img.img-circle.header__bug(src="http://www.fillmurray.com/66/66")
+                  div.col-md-11
+                    h1.header__title Organization Name
+                    h2.header__subtitle.text-muted Organization Mission
+            div.navigation--subnavigation.bg-grey-lighter
+              div.container
+                div.row
+                  ul.nav.nav-pills
+                    li.nav-item
+                      a.nav-link(href="/organization", class=endpoint == '/' ? 'active' : '') Overview
+                    li.nav-item
+                      a.nav-link(href="/referral/all", class=endpoint == '/referral' ? 'active' : '') Services
+                    li.nav-item
+                      a.nav-link(href="/user/all", class=endpoint == '/user' ? 'active' : '') Providers
+                    li.nav-item
+                      a.nav-link(href="/client/all", class=endpoint == '/client' ? 'active' : '') Clients
+        block content
+          +l-section()
+            h2 Organization Overview
     div#scripts
       if user
         script.
