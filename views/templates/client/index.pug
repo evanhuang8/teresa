@@ -18,8 +18,13 @@ block content
                   |  Edit
 
           div.card-block
-            label.text-capitalize=client.stage == 'ok' ? '' : client.stage
-            h1=client.firstName+' '+client.lastName
+            label.text-capitalize
+              span Status: 
+              span=client.stage == 'ok' ? '' : client.stage
+            if client.firstName
+              h1=client.firstName+' '+client.lastName
+            else
+              h1 Name N/A
             h3.text-muted=client.phone
             p=client.dob
             p=client.ssn

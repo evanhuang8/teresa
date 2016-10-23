@@ -158,10 +158,15 @@ ClientSummary = React.createClass
           <div className="card-block">
             {
               if @state.client.stage? and @state.client.stage isnt 'ok'
-                <label className="text-capitalize">{@state.client.stage}</label>
+                <label className="text-capitalize">Status: {@state.client.stage}</label>
             }
             <h2>
-              {@state.client.firstName + ' ' + @state.client.lastName}
+              {
+                if @state.client.firstName? and @state.client.lastName?
+                  "#{@state.client.firstName} #{@state.client.lastName}"
+                else
+                  'Name N/A'
+              }
             </h2>
             <h4>
               <span className="text-muted">

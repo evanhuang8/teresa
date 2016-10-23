@@ -88,12 +88,18 @@ ClientListItem = React.createClass
       <div className="card">
         <div className="card-block">
           <h4 className="card-title">
-            {@props.client.firstName}
             {
-              if @props.client.middleName?
-                " #{@props.client.middleName}"
+              if @props.client.firstName?
+                "#{@props.client.firstName} "
             }
-            {" #{@props.client.lastName}"}
+            {
+              if @props.client.lastName?
+                "#{@props.client.lastName} "
+            }
+            {
+              if not @props.client.firstName? and not @props.client.lastName?
+                'Name N/A'
+            }
           </h4>
           <h5 className="text-muted">
             {@props.client.phone}

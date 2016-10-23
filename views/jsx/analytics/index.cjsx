@@ -54,7 +54,7 @@ AnalyticsCanvas = React.createClass
               <div className="row card-text">
                 <div className="col-md-8">                
                   <h6>
-                    Average Cost / Client
+                    Average Cost / Placement
                   </h6>
                   <h2>${org.avgCost.toFixed(2)}</h2>
                 </div>

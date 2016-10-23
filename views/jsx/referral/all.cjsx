@@ -70,7 +70,22 @@ ReferralListItem = React.createClass
         {moment.tz(referral.createdAt, 'US/Central').format('MM/DD hh:mmA')}
       </td>
       <td>
-        {referral.client.firstName} {referral.client.lastName}
+        {
+          if referral.client.firstName?
+            "#{referral.client.firstName} "
+        }
+        {
+          if referral.client.lastName?
+            "#{referral.client.lastName} "
+        }
+        {
+          if not referral.client.firstName? and not referral.client.lastName?
+            'N/A '
+        }
+        {
+          if not referral.client.firstName? and not referral.client.lastName? and referral.client.phone?
+            "(phone: #{referral.client.phone})"
+        }
       </td>
       <td>
         {

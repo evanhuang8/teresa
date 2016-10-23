@@ -222,6 +222,8 @@ module.exports =
     if not from?
       @status = 400
       return
+    if from.length is 12
+      from = from.substring 2
     body = params.Body?.trim()
     if not body? or body is ''
       @status = 400

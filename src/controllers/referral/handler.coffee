@@ -138,6 +138,7 @@ module.exports =
       referral = handler.data.referral
       return referral.isCheckup and not referral.checkupStatus?
     , (handler, body) ->
+      referral = handler.data.referral
       value = parseInt body
       if value not in [1..3]
         handler.reply messenger.parseErrorCheckup()
