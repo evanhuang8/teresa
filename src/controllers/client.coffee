@@ -152,6 +152,7 @@ module.exports =
     @body =
       status: 'OK'
       clients: clients
+      total: totalResults[0].total/limit
     yield return
 
   fetch_single: () ->
