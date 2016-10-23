@@ -19,9 +19,11 @@
     "tests"
   ],
   "dependencies": {
+    "bootstrap": "4.0.0-alpha.5",
     "classnames": "2.2.3",
     "jquery": "2.2.x",
-    "react": "0.13.x",
-    "tether": "1.1.x"
+    "jquery-serialize-object": "*",
+    "moment-timezone": "0.4.x",
+    "react": "0.13.x"
   }
 }
