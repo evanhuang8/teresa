@@ -1,8 +1,11 @@
 db = require '../db'
 Client = db.model 'Client'
+Checkup = db.model 'Checkup'
 
 sequelize = require 'sequelize'
 SqlString = require 'sequelize/lib/sql-string'
+
+queue = require '../tasks/queue'
 
 CURD = require '../utils/curd'
 
@@ -27,6 +30,10 @@ module.exports =
     return
 
   create: () ->
+    if not @passport.user?
+      @status = 403
+      return
+    user = @passport.user
     params = @request.body
     fields = [
       'firstName'
@@ -42,6 +49,19 @@ module.exports =
       client[field] = params[field]
     yield client.save()
     @status = 201
+    if params.checkupAt?
+      start = moment.tz params.checkupAt, 'US/Central'
+      checkup = yield Checkup.create
+        start: new Date start.valueOf()
+        clientId: client.id
+        organizationId: user.organizationId
+      task = yield queue.add
+        name: 'general'
+        params:
+          id: checkup.id
+        eta: start.clone()
+      checkup.task = task.id
+      yield checkup.save()
     @body = 
       status: 'OK'
       obj: client

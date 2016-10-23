@@ -5,6 +5,12 @@ Referral model
 module.exports = (sequelize, DataTypes) ->
 
   Referral = sequelize.define 'Referral', 
+    # Checkup
+    isCheckup: 
+      type: DataTypes.BOOLEAN
+      defaultValue: false
+    checkupStatus: DataTypes.INTEGER
+    # Text-in
     isInitialized:
       type: DataTypes.BOOLEAN
       defaultValue: false
