@@ -11,8 +11,15 @@ CURD = require '../../utils/curd'
 module.exports =
 
   all: () ->
+    if not @passport.user?
+      @status = 403
+      return
+    services = yield Service.findAll
+      where:
+        organizationId: @passport.user.organizationId
     @render 'service/all',
       user: @passport.user
+      services: services
     yield return
 
   add: () ->
@@ -59,8 +66,7 @@ module.exports =
     keyword = @request.body.keyword
     type = @request.body.type
     query = "
-      SELECT `Services`.*, `Organizations`.`name` FROM `Services` LEFT JOIN `Organizations`
-      ON `Services`.`organizationId` = `Organizations`.`id`
+      SELECT `Services`.* FROM `Services`
     "
     if keyword? or type?
       query += ' WHERE '

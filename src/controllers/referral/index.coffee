@@ -85,6 +85,9 @@ module.exports =
   add: () ->
     id = @request.query.client
     client = yield Client.findById id
+    if not client?
+      @redirect '/client/list'
+      return
     @render 'referral/add',
       client: client
       user: @passport.user
