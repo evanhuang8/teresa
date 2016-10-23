@@ -56,8 +56,8 @@ ClientListItem = React.createClass
             {" #{@props.client.lastName}"}
           </div>
           <div className="col-md-6 text-right">
-            <a className="btn btn-sm btn-secondary" href="javascript:;">View Details</a>
-            <a className="btn btn-sm btn-secondary" href="javascript:;"> Edit</a>
+            <a className="btn btn-sm btn-secondary" href="/client/?client=#{@props.client.id}">View Details</a>
+            <a className="btn btn-sm btn-secondary" href="/client/update?client=#{@props.client.id}"> Edit</a>
             <a className="btn btn-sm btn-success" href="/referral/add?client=#{@props.client.id}"> Refer</a>
           </div>
         </div>
