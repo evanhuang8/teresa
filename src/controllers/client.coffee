@@ -45,8 +45,10 @@ module.exports =
     yield return
 
   list: () ->
+    keyword = @request.query.keyword
     @render 'client/list', 
       user: @passport.user
+      keyword: keyword
     yield return
 
   add: () ->

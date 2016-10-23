@@ -42,6 +42,7 @@ ReferralList = React.createClass
           <th>Client Name</th>
           <th>Service Name</th>
           <th>Referred By</th>
+          <th>Status</th>
         </tr>
       </thead>
       <tbody>
