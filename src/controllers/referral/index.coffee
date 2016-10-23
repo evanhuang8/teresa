@@ -4,8 +4,8 @@ Referral = db.model 'Referral'
 
 MessageHandler = require('./handler').getMessageHandler()
 
-interpreter = require '../../utils/interpreter'
-locationUtils = require '../../utils/location'
+Interpreter = require '../../utils/interpreter'
+LocationUtils = require '../../utils/location'
 
 INTENT_TYPES = ['shelter', 'housing', 'health', 'finances']
 
@@ -29,11 +29,11 @@ createReferral = (client, body) ->
   lng = null
   if not client?
     throw new Error 'Must include a client'
-  result = yield interpreter.interpret body
+  result = yield Interpreter.interpret body
   if result.intent? and result.intent in INTENT_TYPES
     type = result.intent
   if result.location?
-    data = yield locationUtils.geocode
+    data = yield LocationUtils.geocode
       keyword: result.location
     if data?.address?
       address = data.address

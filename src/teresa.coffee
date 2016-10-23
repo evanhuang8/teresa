@@ -27,7 +27,7 @@ module.exports = class Teresa
   app: undefined
 
   constructor: () ->
-    @port = +process.env.T_PORT or 8000
+    @port = +process.env.T_PORT or 8080
     return
 
   init: () ->
