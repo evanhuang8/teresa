@@ -9,6 +9,11 @@ CURD = require '../../utils/curd'
 
 module.exports =
 
+  all: () ->
+    @render 'service/all',
+      user: @passport.user
+    yield return
+
   add: () ->
     @render 'referral/add'
     yield return
