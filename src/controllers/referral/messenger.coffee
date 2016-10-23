@@ -1,10 +1,13 @@
 module.exports = 
 
   menu: () ->
-    'Do you need help with anything today?\n\n1: Temporary shelter\n2: Health\n3: Housing\n4: Job\n5: Food\n6: Funds\n7: Talk to someone\nPlease reply 1-7'
+    'Do you need help with anything today?\n\n1: Temporary shelter\n2: Health\n3: Housing\n4: Job\n5: Food\n6: Funds\n7: Talk to someone\n\nPlease reply 1-7'
 
   parseErrorMenu: () ->
     'Sorry we did not get that. The options are:\n\n1: Temporary shelter\n2: Health\n3: Housing\n4: Job\n5: Food\n6: Funds\n7: Talk to someone'
+
+  connection: () ->
+    'OK. You will receive a call in the next few minutes to connect you with the appropiate personnel. Thanks!'
 
   address: () ->
     'Where are you right now? Please reply with a street address or an intersection (ex: Main Street and North Ave)'
@@ -16,10 +19,10 @@ module.exports =
     message = "#{service.name} is available"
     if directions?
       minutes = Math.round directions.duration / 60
-      message = " (#{minutes}mins away)"
-    message = ', would you want to reserve it?'
+      message += " (#{minutes}mins away)"
+    message += ', would you want to reserve it?'
     if willExpire
-      message += ' Available for the next 15 minutes.'
+      message += ' Please confirm in the next 15 minutes.'
     return message
 
   noReferrals: () ->
@@ -35,4 +38,7 @@ module.exports =
     'OK. Your request is submitted, once it\'s confirmed we will let you know!'
 
   confirmed: (code) ->
-    "OK. Your reservation is confirmed, please present the code #{code} when you arrive. Do you need directions? Please reply yes or no"
+    segment = ''
+    if code?
+      segment = ", please present the code #{code} when you arrive"
+    "OK. Your reservation is confirmed#{segment}. Do you need directions? Please reply yes or no"

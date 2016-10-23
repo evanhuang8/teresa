@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) ->
     isConnection:
       type: DataTypes.BOOLEAN
       defaultValue: false
+    type: DataTypes.STRING
     # Current client state
     address: DataTypes.STRING
     lat: DataTypes.DOUBLE
@@ -41,9 +42,9 @@ module.exports = (sequelize, DataTypes) ->
         as: 'client'
       Referral.belongsTo models.Service,
         as: 'service'
-      Referral.belongsTo models.Organization, 
+      Referral.belongsTo models.Organization, # Dest
         as: 'referee'
-      Referral.belongsTo models.Organization, 
+      Referral.belongsTo models.Organization, # Source
         as: 'referer'
       Referral.belongsTo models.User, 
         as: 'user'

@@ -203,6 +203,7 @@ module.exports = class MessageTests
       # Fetch the data
       for key, mapping of @data
         mapping.object = yield mapping.model.findById mapping.object.id
+      console.log 'sdfdsdsf'
       # Perform assertion
       should.exist @res.Response
       if step.expect?

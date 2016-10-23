@@ -7,10 +7,13 @@ module.exports =
   geocode: (opts) ->
     url = 'https://maps.googleapis.com/maps/api/place/textsearch/json?'
     url += 'key=' + GOOGLE_API_KEY
-    url += '&query=' + encodeURIComponent opts.keyword
+    keyword = opts.keyword
+    url += '&query=' + encodeURIComponent opts.keyword 
     if opts.near?
       url += "&location=#{opts.near.lat},#{opts.near.lng}"
       url += '&radius=50000'
+    else
+      url += '&location=38.6393062,-90.2966798&radius=50000'
     res = yield request url
     _res = JSON.parse res.body
     if _res.status isnt 'OK'
