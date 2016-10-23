@@ -5,7 +5,7 @@ CURD = require '../utils/curd'
 
 module.exports = 
   add: () ->
-    @render 'client/index'
+    @render 'client/add'
     yield return
     return
 
