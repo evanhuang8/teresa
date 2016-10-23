@@ -1,0 +1,28 @@
+// Bootstrap
+@import "_custom";
+@import "../../bower_components/bootstrap/scss/bootstrap";
+
+.l-section {
+  padding-top: $grid-gutter-width-base;
+  padding-bottom: $grid-gutter-width-base;
+}
+
+.bg-grey-lighter {
+  background-color: $gray-lighter;
+}
+
+.header__bug,
+.header__title {
+  padding-top: $grid-gutter-width-base / 2;
+}
+
+.header__subtitle {
+  padding-bottom: $grid-gutter-width-base / 2;
+}
+
+.navigation--breadcrumb,
+.navigation--subnavigation {
+  padding-top: $grid-gutter-width-base / 5;
+  padding-bottom: $grid-gutter-width-base / 5;
+}
+

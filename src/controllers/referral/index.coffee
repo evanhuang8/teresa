@@ -75,7 +75,8 @@ createReferral = (client, body) ->
 module.exports = 
 
   all: () ->
-    @render 'referral/all'
+    @render 'referral/all',
+      user: @passport.user
     yield return
 
   add: () ->

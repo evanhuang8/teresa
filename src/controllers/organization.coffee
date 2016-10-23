@@ -7,7 +7,8 @@ CURD = require '../utils/curd'
 module.exports = 
 
   index: () ->
-    @render 'organization/index'
+    @render 'organization/index', 
+      user: @passport.user
     yield return
     return
 

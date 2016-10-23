@@ -1,5 +1,5 @@
 mixin l-section(color)
-  div.l-section(style=`background-color:${color};`)
+  div.l-section(style=color ? `background-color:${color};` : '', class!=attributes.class)
     div.container
       if block
         block
