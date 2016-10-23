@@ -17,6 +17,7 @@ module.exports = () ->
     client: require './controllers/client'
     referral: require './controllers/referral'
     service: require './controllers/service'
+    analytics: require './controllers/analytics'
 
   # Index
   urls.all '/', controllers.index.index
