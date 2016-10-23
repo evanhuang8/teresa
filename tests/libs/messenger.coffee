@@ -230,7 +230,7 @@ module.exports = class MessageTests
       if step.assert?
         for key, assert of step.assert
           try
-            yield @assert key, step.assert[key]
+            @assert key, step.assert[key]
           catch err
             err.message = "Step #{i}: #{err.message}"
             throw err

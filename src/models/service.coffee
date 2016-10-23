@@ -74,9 +74,9 @@ module.exports = (sequelize, DataTypes) ->
       Service.belongsTo models.Organization,
         as: 'organization'
       return
-    classMethod: 
+    classMethods: 
       isOpen: (businessHours, tz) ->
-        now = moment.tz
+        now = moment.tz tz
         day = now.day()
         interval = businessHours[day]
         if interval.always
