@@ -252,91 +252,6 @@ describe 'Teresa', ->
         gb.client = client
         return
 
-  describe 'Handlers', ->
-
-    describe 'Interpreter', ->
-
-      before ->
-        gb.interpreter = require '../src/utils/interpreter'
-        gb.Referral = gb.db.model 'Referral'
-        return
-
-      it 'should interpret string', ->
-        result = yield gb.interpreter.interpret 'I want to find a place to sleep near University City'
-        result.intent.should.equal 'shelter'
-        result.location.should.equal 'University City'
-        return
-
-    describe 'Incoming Message', ->
-
-      it 'should create referral from generic string', ->
-        res = yield request(gb.app)
-          .post '/referral/message/'
-          .send
-            From: gb.client.phone
-            Body: 'I need help'
-          .expect 200
-          .end()
-        res = yield parseXML res.text
-        should.exist res.Response.Message
-        referral = yield gb.Referral.findOne
-          where:
-            clientId: gb.client.id
-        should.exist referral
-        should.not.exist referral.type
-        should.not.exist referral.address
-        should.not.exist referral.lat
-        should.not.exist referral.lng
-        referral.isCheckup.should.be.false
-        return
-
-      it 'should create referral from intent string', ->
-        yield gb.Referral.destroy
-          where: {}
-        res = yield request(gb.app)
-          .post '/referral/message/'
-          .send
-            From: gb.client.phone
-            Body: 'I need help finding a bed'
-          .expect 200
-          .end()
-        res = yield parseXML res.text
-        should.exist res.Response.Message
-        referral = yield gb.Referral.findOne
-          where:
-            clientId: gb.client.id
-        should.exist referral
-        referral.type.should.equal 1
-        should.not.exist referral.address
-        should.not.exist referral.lat
-        should.not.exist referral.lng
-        referral.isCheckup.should.be.false
-        return
-
-      it 'should create referral from intent & location string', ->
-        @timeout 5000
-        yield gb.Referral.destroy
-          where: {}
-        res = yield request(gb.app)
-          .post '/referral/message/'
-          .send
-            From: gb.client.phone
-            Body: 'I want to find an apartment in Clayton'
-          .expect 200
-          .end()
-        res = yield parseXML res.text
-        should.exist res.Response.Message
-        referral = yield gb.Referral.findOne
-          where:
-            clientId: gb.client.id
-        should.exist referral
-        referral.type.should.equal 2
-        should.exist referral.address
-        should.exist referral.lat
-        should.exist referral.lng
-        referral.isCheckup.should.be.false
-        return
-
   describe 'Location', ->
 
     before ->
@@ -344,6 +259,7 @@ describe 'Teresa', ->
       return
 
     it '#geocode', ->
+      @timeout 5000
       result = yield gb.LocationUtils.geocode
         keyword: 'maryland and taylor'
         near:
@@ -356,6 +272,7 @@ describe 'Teresa', ->
       return
 
     it '#direction', ->
+      @timeout 5000
       yield gb.LocationUtils.directions
         origin:
           lat: 38.6440
@@ -453,6 +370,7 @@ describe 'Teresa', ->
       return
 
     it 'should be able to return nearest open shelter', ->
+      @timeout 5000
       hours = []
       for i in [0...7]
         hours.push
@@ -507,6 +425,7 @@ describe 'Teresa', ->
       return
 
     it 'should be able to reserve a shelter', ->
+      @timeout 10000
       result = yield gb.LocationUtils.geocode
         keyword: 'maryland and taylor'
         near:
@@ -526,6 +445,7 @@ describe 'Teresa', ->
         lat: shelter.organization.lat
         lng: shelter.organization.lng
       [intent, directions] = yield gb.ShelterUtils.reserve
+        client: gb.client
         shelter: shelter
         origin: origin
         destination: destination
@@ -535,6 +455,99 @@ describe 'Teresa', ->
       shelter = yield gb.ShelterService.findById shelter.id
       shelter.openCapacity.should.equal capacity - 1
       return
+
+  describe 'Handlers', ->
+
+    describe 'Interpreter', ->
+
+      before ->
+        gb.interpreter = require '../src/utils/interpreter'
+        gb.Referral = gb.db.model 'Referral'
+        return
+
+      it 'should interpret string', ->
+        result = yield gb.interpreter.interpret 'I want to find a place to sleep near University City'
+        result.intent.should.equal 'shelter'
+        result.location.should.equal 'University City'
+        return
+
+    describe 'Incoming Message', ->
+
+      it 'should create referral from generic string', ->
+        res = yield request(gb.app)
+          .post '/referral/message/'
+          .send
+            From: gb.client.phone
+            Body: 'I need help'
+          .expect 200
+          .end()
+        res = yield parseXML res.text
+        should.exist res.Response.Message
+        referral = yield gb.Referral.findOne
+          where:
+            clientId: gb.client.id
+        should.exist referral
+        should.not.exist referral.type
+        should.not.exist referral.address
+        should.not.exist referral.lat
+        should.not.exist referral.lng
+        referral.isCheckup.should.be.false
+        return
+
+      it 'should create referral from intent string', ->
+        yield gb.Referral.destroy
+          where: {}
+        res = yield request(gb.app)
+          .post '/referral/message/'
+          .send
+            From: gb.client.phone
+            Body: 'I need help finding an apartment'
+          .expect 200
+          .end()
+        res = yield parseXML res.text
+        should.exist res.Response.Message
+        referral = yield gb.Referral.findOne
+          where:
+            clientId: gb.client.id
+        should.exist referral
+        referral.type.should.equal 'housing'
+        should.not.exist referral.address
+        should.not.exist referral.lat
+        should.not.exist referral.lng
+        referral.isCheckup.should.be.false
+        return
+
+      it 'should create referral from intent & location string', ->
+        @timeout 5000
+        yield gb.Referral.destroy
+          where: {}
+        res = yield request(gb.app)
+          .post '/referral/message/'
+          .send
+            From: gb.client.phone
+            Body: 'I want to find a bed near Broadway Oyster Bar'
+          .expect 200
+          .end()
+        res = yield parseXML res.text
+        should.exist res.Response.Message
+        referral = yield gb.Referral.findOne
+          where:
+            clientId: gb.client.id
+        should.exist referral
+        referral.type.should.equal 'shelter'
+        should.exist referral.address
+        should.exist referral.lat
+        should.exist referral.lng
+        referral.isCheckup.should.be.false
+        res = yield request(gb.app)
+          .post '/referral/message/'
+          .send
+            From: gb.client.phone
+            Body: 'yes'
+          .expect 200
+          .end()
+        res = yield parseXML res.text
+        return
 
   after ->
     gb.app?.close()

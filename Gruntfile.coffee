@@ -1,3 +1,5 @@
+ngrok = require 'ngrok'
+
 module.exports = (grunt) ->
 
   grunt.loadNpmTasks 'grunt-bower-concat'
@@ -149,5 +151,22 @@ module.exports = (grunt) ->
   grunt.registerTask 'compile', ['bower_concat', 'sass', 'cjsx', 'concat']
   grunt.registerTask 'dev', ['compile', 'env:dev', 'concurrent:dev']
   grunt.registerTask 'test', ['env:test', 'mochaTest']
+
+  grunt.registerTask 'ngrok', () ->
+    done = @async()
+    params =
+      port: 8080
+    if credentials.NGROK_SUBDOMAIN?
+      params.authtoken = credentials.NGROK_AUTH_TOKEN
+      params.subdomain = credentials.NGROK_SUBDOMAIN
+    ngrok.connect params, (err, url) ->
+      return done err if err
+      console.log "Ngrok tunnel established at: #{url}"
+      grunt.config.set 'env.options.T_ROOT', url
+      grunt.config.set 'env.options.T_STATIC_PREFIX', "#{url}/static/"
+      done()
+      return
+    return
+  grunt.registerTask 'dev-ng', ['ngrok', 'dev']
 
   return
