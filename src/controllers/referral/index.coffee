@@ -1,4 +1,5 @@
 moment = require 'moment-timezone'
+twilio = require 'twilio'
 
 db = require '../../db'
 Client = db.model 'Client'
@@ -148,3 +149,11 @@ module.exports =
       id: referral.id
     yield handler.handle this
     return
+
+  connect_call: () ->
+    response = new twilio.TwimlResponse()
+    response.say 'Please hold while we try to connect you.', 
+      voice: 'woman'
+    response.dial '+18004274626'
+    @body = response.toString()
+    yield return
