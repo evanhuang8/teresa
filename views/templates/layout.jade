@@ -1,7 +1,9 @@
 doctype html
 html(lang="en")
   head
-    title Teresa HIMS
+    title
+      block title
+        | Teresa HIMS
     meta(name="viewport", content="width=device-width, initial-scale=1, shrink-to-fit=no")
     link(rel="stylesheet", href="#{staticPrefix}css/vendor.css")
     link(rel="stylesheet", href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css")
@@ -13,7 +15,7 @@ html(lang="en")
           a.navbar-brand(href="/")
             | Teresa
           div.nav.navbar-nav.pull-right
-              //-span.nav-item.dropdown
+              span.nav-item.dropdown
                 a.nav-link.dropdown-toggle(href="#", data-toggle="dropdown")
                   span.fa.fa-gears
                   |  Analytics
@@ -30,6 +32,12 @@ html(lang="en")
               //-a.nav-item.nav-link(href="/data") 
                 span.fa.fa-tasks
                 |  Data
+      div#wrapper-middle
+        block content
+          //-
+      div#wrapper-footer
+        block footer
+          //-
     div#scripts
       script(src="#{staticPrefix}js/libraries.js")
       script(src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js", crossorigin="anonymous")
