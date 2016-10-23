@@ -52,7 +52,6 @@ module.exports =
 
   reserve: (opts) ->
     client = opts.client
-    referral = opts.referral
     service = opts.service
     if service.maxCapacity isnt 0 and service.openCapacity <= 0
       return
@@ -71,7 +70,6 @@ module.exports =
           code: uid 6
           clientId: client.id
           serviceId: service.id
-          referralId: referral.id
         , 
           transaction: t
         # FIXME: schedule auto expiration
