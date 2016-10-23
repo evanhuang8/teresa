@@ -42,3 +42,9 @@ module.exports =
     if code?
       segment = ", please present the code #{code} when you arrive"
     "OK. Your reservation is confirmed#{segment}. Do you need directions? Please reply yes or no"
+
+  noDirection: () ->
+    'Sorry, we do not have direction for you at this time.'
+
+  end: () ->
+    'OK. You can text `direction` later to get the direction.'

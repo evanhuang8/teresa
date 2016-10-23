@@ -24,6 +24,7 @@ module.exports = (sequelize, DataTypes) ->
     isConfirmed:
       type: DataTypes.BOOLEAN
       defaultValue: false
+    isDirectionSent: DataTypes.BOOLEAN
     start: DataTypes.DATE
     end: DataTypes.DATE
     isComplete:

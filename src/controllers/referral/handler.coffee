@@ -222,7 +222,7 @@ module.exports =
       if isReserved
         # FIXME: Cancel the intent expiration
         service = referral.service
-        if services.isConfirmationRequired
+        if service.isConfirmationRequired
           # FIXME: send message to notify service provider
           message = messenger.pendingConfirmation()
         else
@@ -239,6 +239,39 @@ module.exports =
       yield referral.save()
       handler.reply message
       yield referral.save()
+      return
+
+    ###
+    Direction
+    ###
+    handler.addHook (handler, body) ->
+      referral = handler.data.referral
+      return not referral.isDirectionSent? or body is 'direction'
+    , (handler, body) ->
+      referral = handler.data.referral
+      if not referral.isDirectionSent? and not handler.isYesNo body
+        handler.reply messenger.parseErrorYesNo()
+        return
+      referral = handler.data.referral
+      if not referral.isDirectionSent?
+        referral.isDirectionSent = handler.isYes body
+        yield referral.save()
+      if body is 'direction' or referral.isDirectionSent
+        organization = yield Organization.findById referral.service.organizationId
+        directions = yield LocationUtils.directions
+          origin: 
+            lat: referral.lat
+            lng: referral.lng
+          destination:
+            lat: organization.lat
+            lng: organization.lng
+        if not directions?
+          handler.reply messenger.noDirections()
+          return
+        message = directions.steps.join '\n'
+        handler.reply message
+        return
+      handler.reply messenger.end()
       return
 
     return handler

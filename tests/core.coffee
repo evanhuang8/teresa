@@ -518,6 +518,7 @@ describe 'Teresa', ->
       should.exist referral
       referral.type.should.equal 'shelter'
       referral.isInitialized.should.be.true
+      code = null
       steps = [
         input: 'Maryland St. & Taylor St.'
         assert:
@@ -526,6 +527,13 @@ describe 'Teresa', ->
               serviceId: gb.services[0].id
               refereeId: gb.services[0].organizationId
             exists: ['address', 'lat', 'lng']
+        test: ->
+          intent = yield gb.Intent.findOne
+            where:
+              referralId: referral.id
+          should.exist intent
+          code = intent.code
+          return
       ]
       messenger = new MessageTests
         app: gb.app
@@ -534,7 +542,33 @@ describe 'Teresa', ->
         steps: steps
         assert:
           referral: referral
-        debug: true
+      yield messenger.run()
+      referral = yield gb.Referral.findById referral.id
+      steps = [
+        input: 'yes'
+        expect: gb.messenger.confirmed code
+        assert:
+          referral: 
+            values:
+              isReserved: true
+              isConfirmed: true
+      ,
+        input: 'no'
+        expect: gb.messenger.end()
+        assert:
+          referral:
+            values:
+              isDirectionSent: false
+      ,
+        input: 'direction'
+      ]
+      messenger = new MessageTests
+        app: gb.app
+        from: gb._phone
+        url: '/referral/message/'
+        steps: steps
+        assert:
+          referral: referral
       yield messenger.run()
       return
 
