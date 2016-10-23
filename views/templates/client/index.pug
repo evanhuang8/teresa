@@ -1,0 +1,54 @@
+extend ../layout
+
+block content
+  +l-section('salmon')
+    div.card
+      div.card-block
+        h1.card-title Basic Information
+        table.table
+          thead
+            tr
+              th First Name
+              th Last Name
+              th DOB
+              th Phone Number
+          tbody
+            tr
+              td Eric
+              td Schmidt
+              td 01/01/1951
+              td 555-555-5555
+        button.btn.btn-primary More Information »
+
+
+  +l-section('aquamarine')
+    div.card
+      div.card-block
+        h1.card-title Milestones
+        ul.list-group
+          li.list-group-item
+            p Service #1
+          li.list-group-item
+            p Service #1
+          li.list-group-item
+            p Service #1
+          li.list-group-item
+            p Service #1
+          li.list-group-item
+            p Service #1
+
+  +l-section('goldenrod')
+    div.card
+      div.card-block
+        h1.card-title Services
+        ul.list-group
+          li.list-group-item
+            p Service #1
+          li.list-group-item
+            p Service #1
+          li.list-group-item
+            p Service #1
+          li.list-group-item
+            p Service #1
+          li.list-group-item
+            p Service #1

@@ -4,6 +4,11 @@ Client = db.model 'Client'
 CURD = require '../utils/curd'
 
 module.exports = 
+  index: () ->
+    @render 'client/index'
+    yield return
+    return
+
   add: () ->
     @render 'client/add'
     yield return
