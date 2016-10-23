@@ -34,6 +34,7 @@ html(lang="en", class=isLogin ? 'bg-grad-green' : '')
       div#wrapper-content
         block header
           if user
+            - var org = user.organization;
             div.navigation--breadcrumb.bg-grad-grey-lighter
               div.container
                 a(href="/community") St. Louis City Continuum of Care
@@ -42,8 +43,8 @@ html(lang="en", class=isLogin ? 'bg-grad-green' : '')
                 div.col-md-1
                   img.img-circle.header__bug(src="http://www.fillmurray.com/66/66")
                 div.col-md-11
-                  h1.header__title Organization Name
-                  h2.header__subtitle.text-muted Organization Mission
+                  h1.header__title= org.name
+                  h2.header__subtitle.text-muted= org.description
             div.navigation--subnavigation.bg-grey-lighter
               div.container
                 div.row
