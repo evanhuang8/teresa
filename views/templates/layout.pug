@@ -7,6 +7,7 @@ html(lang="en")
       block title
         | Teresa HIMS
     meta(name="viewport", content="width=device-width, initial-scale=1, shrink-to-fit=no")
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i")
     link(rel="stylesheet", href=`${staticPrefix}css/vendor.css`)
     link(rel="stylesheet", href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css")
     link(rel="stylesheet", href=`${staticPrefix}css/teresa.css`)
@@ -18,23 +19,6 @@ html(lang="en")
             | Teresa
           div.nav.navbar-nav.pull-right
             if user
-              //-span.nav-item.dropdown
-                a.nav-link.dropdown-toggle(href="#", data-toggle="dropdown")
-                  span.fa.fa-gears
-                  |  Analytics
-                div.dropdown-menu
-                  a.dropdown-item(href="/analytics")
-                    span.fa.fa-pie-chart 
-                    |  Overview
-                  a.dropdown-item(href="/analytics/engagement")
-                    span.fa.fa-line-chart
-                    |  Engagement
-                  a.dropdown-item(href="/analytics/risks")
-                    span.fa.fa-cubes
-                    |  Risks/Triage
-              //-a.nav-item.nav-link(href="/data") 
-                span.fa.fa-tasks
-                |  Data
               a.nav-item.nav-link(href="/logout") 
                 span.fa.fa-sign-out
                 |  Logout
@@ -44,28 +28,29 @@ html(lang="en")
                 |  Login
         div#wrapper-content
           block header
-            +l-section('salmon')
-              div
-                a(href="/community") St. Louis City CoC
-            div(style="background-image:url('http://www.fillmurray.com/1024/150'); background-size:cover;")
-              div.container
+            if user
+              +l-section('salmon')
+                div
+                  a(href="/community") St. Louis City CoC
+              div(style="background-image:url('http://www.fillmurray.com/1024/150'); background-size:cover;")
+                div.container
+                  div.row
+                    div.col-md-8
+                      h1 {Organization Name}
+                      h2 {Organization Mission}
+                    div.col-md-4.text-right
+                      img(src="http://www.fillmurray.com/150/150")
+              +l-section('aquamarine')
                 div.row
-                  div.col-md-8
-                    h1 {Organization Name}
-                    h2 {Organization Mission}
-                  div.col-md-4.text-right
-                    img(src="http://www.fillmurray.com/150/150")
-            +l-section('aquamarine')
-              div.row
-                ul.nav.nav-pills
-                  li.nav-item
-                    a.nav-link(href="/organization") Activity
-                  li.nav-item
-                    a.nav-link(href="/referral/all") Service
-                  li.nav-item
-                    a.nav-link.active(href="/user/all") Providers
-                  li.nav-item
-                    a.nav-link(href="/client/all") Clients
+                  ul.nav.nav-pills
+                    li.nav-item
+                      a.nav-link(href="/organization") Activity
+                    li.nav-item
+                      a.nav-link(href="/referral/all") Service
+                    li.nav-item
+                      a.nav-link.active(href="/user/all") Providers
+                    li.nav-item
+                      a.nav-link(href="/client/all") Clients
           block content
     div#scripts
       script(src=`${staticPrefix}js/libraries.js`)
