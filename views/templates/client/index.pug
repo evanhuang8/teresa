@@ -1,19 +1,45 @@
 extend ../layout
 
 block content
-  form
-    
-    +input('email', 'test', 'Email Label', 'Placeholder', false)
-    +input('password', 'test', 'Pass Label', 'Placeholder', false)
-    +input('text', 'test', 'Text Label', 'Placeholder', false)
-    +input('number', 'test', 'Number Label', 'Placeholder', false)
+  div.container
+    h1 Client in-take form
+    div.row
+      div.col-md-8
+        form
+          - var name = ''
+          +input('text', 'clientFirstName', 'First Name', false, false)
+          +input('text', 'clientLastName', 'Last Name', false, false)
+          +input('number', 'clientSSN', 'Social Security Number', 5555555555, false)
+          +input('date', 'clientDOB', 'Date of Birth', false, false)
+          +input('textarea', 'clientLastAddress', 'Last Known Address', false, false)
+          +input-check-group('Race')
+            - name = 'clientRace'
+            +input-check('radio', name, 'Red')
+            +input-check('radio', name, 'Green')
+            +input-check('radio', name, 'Blue')
+          +input-check-group('Ethnicity')
+            - name = 'clientEthnicity'
+            +input-check('radio', name, 'Red')
+            +input-check('radio', name, 'Green')
+            +input-check('radio', name, 'Blue')
+          +input-check-group('Gender')
+            - name = 'clientGender'
+            +input-check('radio', name, 'Male')
+            +input-check('radio', name, 'Female')
+          +input('select', 'clientVeteranStatus', 'Veteran Status', false, ['Civilian', 'Active Duty', 'Honorably Discharged', 'Dishonorably Discharged'])
+          +input('text', 'clientDisabilities', 'Disabilities', false, false)
+          +input('text', 'clientPreviousResidence', 'Residence Prior to Project Entry', false, false)
+          +input('date', 'clientStartDate', 'Project Entry Date', false, false)
+          +input('date', 'clientEndDate', 'Project Exit Date', false, false)
+          +input('text', 'clientDestination', 'Destination', false, false)
+          +input('number', 'clientPersonalID', 'Personal ID', false, false)
+          +input('number', 'clientHouseholdID', 'Household ID', false, false)
+          +input('select', 'clientRelationshipToHeadOfHousehold', 'Relationship to Head of Household', false, ['Partner', 'Friend', 'Other'])
+          +input('number', 'clientLocationCode', 'Client Location Code', false, false)
+          +input('number', 'clientTimeOnStreet', 'Length of Time on Street, in an Emergency', false, false)
+          +input-check-group('Shelter or Safe Haven')
+            +input-check('checkbox', 'clientShelterSafeHaven', 'Shelter')
+            +input-check('checkbox', 'clientShelterSafeHaven', 'Safe Haven')
 
-    +input('textarea', 'test', 'Textarea Label', 'Placeholder', false)
+            button.btn.btn-primary(type="submit") Submit
 
-    +input('select', 'select', 'Label', 'Bloop', ['one', 'two', 'three'])
-
-    +input-check-group('Radio')
-      - var name = 'optionsRadios'
-      +input-check('radio', name, 'Radio', 'value1')
-      +input-check('radio', name, 'Radio', 'value2')
-      +input-check('radio', name, 'Radio', 'value3')
