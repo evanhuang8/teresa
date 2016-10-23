@@ -13,6 +13,16 @@ $green-lighter: #e7ffd9;
   background-color: $green-lighter;
 }
 
+.bg-grad-green {
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#8adb00+0,0aa300+100 */
+background: #8adb00; /* Old browsers */
+background: -moz-linear-gradient(-45deg,  #8adb00 0%, #0aa300 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(-45deg,  #8adb00 0%,#0aa300 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(135deg,  #8adb00 0%,#0aa300 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#8adb00', endColorstr='#0aa300',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+height: 100%;
+}
+
 .bg-grey-lighter {
   background-color: $gray-lighter;
 }
@@ -49,5 +59,12 @@ $green-lighter: #e7ffd9;
 .navigation--subnavigation {
   padding-top: $grid-gutter-width-base / 5;
   padding-bottom: $grid-gutter-width-base / 5;
+}
+
+.logo--landing {
+  margin: $grid-gutter-width-base * 1.5 auto $grid-gutter-width-base;
+  display: block;
+  height: 300px;
+  width: auto;
 }
 

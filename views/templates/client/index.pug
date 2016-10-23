@@ -27,7 +27,11 @@ block content
       div.col-md-8
         div.card.mb-3
           div.card-header
-            h5.card-title.card-title--with-input Referrals
+            div.row
+              div.col-md-7
+                h5.card-title.card-title--with-input Referrals
+              div.col-md-5
+                a.btn.btn-primary.pull-right(href=`/referrals/add?id=${id}`) New Referral
           div.card-block
             ul.list-group
               li.list-group-item
@@ -43,7 +47,11 @@ block content
 
         div.card
           div.card-header
-            h5.card-title.card-title--with-input Services
+            div.row
+              div.col-md-7
+                h5.card-title.card-title--with-input Services
+              div.col-md-5
+                a.btn.btn-primary.pull-right(href=`/service/add?id=${id}`) Add Service
           div.card-block
             ul.list-group
               li.list-group-item
