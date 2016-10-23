@@ -107,7 +107,6 @@ ReferralListItem = React.createClass
                     'Completed'
                   else
                     'Confirmed'
-
                 }
               </small>
             else
