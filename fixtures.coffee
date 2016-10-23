@@ -55,6 +55,11 @@ co ->
     password: 'password2'
     organizationId: orgB.id
 
+  userC = yield User.create
+    email: 'user3@example.com'
+    password: 'password3'
+    organizationId: orgC.id
+
   hours = []
   for i in [0...7]
     hours.push
@@ -77,11 +82,11 @@ co ->
     organizationId: orgB.id
   shelterC = yield Service.create
     name: 'My Crib'
-    type: 'food'
+    type: 'shelter'
     description: 'Great'
     businessHours: hours
     maxCapacity: 100
-    openCapacity: 0
+    openCapacity: 10
     organizationId: orgC.id
 
   clients = []

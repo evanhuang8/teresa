@@ -11,6 +11,7 @@ Referral = db.model 'Referral'
 Service = db.model 'Service'
 Intent = db.model 'Intent'
 
+io = require '../../io'
 queue = require '../../tasks/queue'
 
 MessageHandler = require '../../handlers/message'
@@ -269,7 +270,7 @@ module.exports =
         # FIXME: Cancel the intent expiration
         service = referral.service
         if service.isConfirmationRequired
-          # FIXME: send message to notify service provider
+          yield io.addReferralRequest referral
           message = messenger.pendingConfirmation()
         else
           referral.isConfirmed = true
@@ -278,6 +279,7 @@ module.exports =
             where:
               referralId: referral.id
           message = messenger.confirmed intent?.code
+          yield io.addReferralRequest referral
       else
         referral.isCanceled = true
         referral.canceledAt = new Date()
@@ -319,5 +321,11 @@ module.exports =
         return
       handler.reply messenger.end()
       return
+
+    handler.addHook (handler, body) ->
+      return true
+    , (handler, body) ->
+      handler.reply messenger.restart()
+      yield return
 
     return handler

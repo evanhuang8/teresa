@@ -41,7 +41,7 @@ module.exports =
     'Sorry we cannot find an appropriate service near you. Would you want to talk to someone directly instead? Please reply yes or no.'
 
   parseErrorYesNo: () ->
-    'Sorry, we didn\'t get that. Please reply yes to reserve or no to not reserve.'
+    'Sorry, we didn\'t get that. Please reply yes or no.'
 
   cancel: () ->
     'OK. If you need help with anything else, just let us know. We are here for you.'
@@ -60,3 +60,6 @@ module.exports =
 
   end: () ->
     'OK. You can text `direction` later to get the direction.'
+
+  restart: () ->
+    'If you need other help, reply `restart` at any point.'

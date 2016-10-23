@@ -55,7 +55,7 @@ createReferral = (client, body) ->
   result = yield Interpreter.interpret body
   if result.intent? and result.intent in SERVICE_TYPES
     type = result.intent
-  if result.location?
+  if type? and result.location?
     data = yield LocationUtils.geocode
       keyword: result.location
     if data?
