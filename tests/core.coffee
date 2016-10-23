@@ -259,6 +259,7 @@ describe 'Teresa', ->
       return
 
     it '#geocode', ->
+      @timeout 5000
       result = yield gb.LocationUtils.geocode
         keyword: 'maryland and taylor'
         near:
@@ -271,6 +272,7 @@ describe 'Teresa', ->
       return
 
     it '#direction', ->
+      @timeout 5000
       yield gb.LocationUtils.directions
         origin:
           lat: 38.6440
@@ -368,6 +370,7 @@ describe 'Teresa', ->
       return
 
     it 'should be able to return nearest open shelter', ->
+      @timeout 5000
       hours = []
       for i in [0...7]
         hours.push
@@ -422,6 +425,7 @@ describe 'Teresa', ->
       return
 
     it 'should be able to reserve a shelter', ->
+      @timeout 10000
       result = yield gb.LocationUtils.geocode
         keyword: 'maryland and taylor'
         near:
@@ -441,6 +445,7 @@ describe 'Teresa', ->
         lat: shelter.organization.lat
         lng: shelter.organization.lng
       [intent, directions] = yield gb.ShelterUtils.reserve
+        client: gb.client
         shelter: shelter
         origin: origin
         destination: destination
@@ -496,7 +501,7 @@ describe 'Teresa', ->
           .post '/referral/message/'
           .send
             From: gb.client.phone
-            Body: 'I need help finding a bed'
+            Body: 'I need help finding an apartment'
           .expect 200
           .end()
         res = yield parseXML res.text
@@ -505,7 +510,7 @@ describe 'Teresa', ->
           where:
             clientId: gb.client.id
         should.exist referral
-        referral.type.should.equal 'shelter'
+        referral.type.should.equal 'housing'
         should.not.exist referral.address
         should.not.exist referral.lat
         should.not.exist referral.lng
@@ -520,7 +525,7 @@ describe 'Teresa', ->
           .post '/referral/message/'
           .send
             From: gb.client.phone
-            Body: 'I want to find an apartment in Clayton'
+            Body: 'I want to find a bed near Broadway Oyster Bar'
           .expect 200
           .end()
         res = yield parseXML res.text
@@ -529,11 +534,19 @@ describe 'Teresa', ->
           where:
             clientId: gb.client.id
         should.exist referral
-        referral.type.should.equal 'housing'
+        referral.type.should.equal 'shelter'
         should.exist referral.address
         should.exist referral.lat
         should.exist referral.lng
         referral.isCheckup.should.be.false
+        res = yield request(gb.app)
+          .post '/referral/message/'
+          .send
+            From: gb.client.phone
+            Body: 'yes'
+          .expect 200
+          .end()
+        res = yield parseXML res.text
         return
 
   after ->

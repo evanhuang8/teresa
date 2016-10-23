@@ -66,5 +66,9 @@ module.exports =
         intent = yield ShelterIntent.create
           expiresAt: new Date expiresAt.valueOf()
           code: uid 6
+          clientId: opts.client.id
+          shelterId: opts.shelter.id
+        , 
+          transaction: t
         return
     return [intent, directions]

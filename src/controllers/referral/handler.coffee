@@ -8,6 +8,8 @@ Client = db.model 'Client'
 Organization = db.model 'Organization'
 MessageHandler = require '../../handlers/message'
 
+ShelterService = db.model 'ShelterService'
+
 locationUtils = require '../../utils/location'
 shelterUtils = require '../../controllers/shelter/utils'
 
@@ -21,8 +23,16 @@ findAndSelectShelter = (referral) ->
     lat: referral.lat
     lng: referral.lng
     isAvailable: true
-  console.log nearShelters
-  return
+  shelter = null
+  if nearShelters.length > 0
+    shelter = nearShelters[0]
+  return shelter
+
+getShelter = (referral) ->
+  shelter = yield ShelterService.findOne
+    where:
+      id: referral.serviceId
+  return shelter
 
 module.exports = 
 
@@ -81,14 +91,12 @@ module.exports =
         message = 'Where are you right now? Please reply with a street address or an intersection (ex: Main Street and North Ave.)'
       else if referral.type? and referral.address? and referral.lat? and referral.lng?
         shelter = yield findAndSelectShelter referral
-        directions = yield locationUtils.directions
-          origin:
-            lat: referral.lat
-            lng: referral.lng
-          destination:
-            lat: shelter.lat
-            lng: shelter.lng
-        message = test
+        if shelter?
+          message = "#{shelter.name} has a bed available. Would you like to reserve it? Please reply yes or no."
+          referral.serviceId = shelter.id
+          referral.refereeId = shelter.organizationId
+        else
+          message = 'We could not find a shelter near you with available beds. Please call this number to reach a support line.'
       handler.reply message 
       referral.isInitialized = true
       yield referral.save()
@@ -165,15 +173,47 @@ module.exports =
       referral.lng = result.lng
       yield referral.save()
       shelter = yield findAndSelectShelter referral
+      if shelter?
+        message = "#{shelter.name} has a bed available. Would you like to reserve it? Please reply yes or no."
+        referral.serviceId = shelter.id
+        referral.refereeId = shelter.organizationId
+      else
+        message = 'We could not find a shelter near you with available beds. Please call this number to reach a support line.'
+      yield referral.save()
+      handler.reply message
       return
 
     # Has type and location
     handler.addHook (handler, body) ->
       referral = handler.data.referral
-      return notCheckup(referral) and referral.type? and referral.address?
+      return notCheckup(referral) and referral.serviceId? and not referral.isReserved?
     , (handler, body) ->
-      handler.reply 'Ask for reservation'
-      yield
+      referral = handler.data.referral
+      referee = referral.referee
+      if not handler.isYesNo body
+        handler.reply 'Sorry, we didn\'t get that. Please reply yes to reserve or no to not reserve.'
+        return
+      if handler.isYes body
+        shelter = yield getShelter referral
+        result = yield shelterUtils.reserve
+          client: referral.client
+          shelter: shelter
+          origin:
+            lat: referral.lat
+            lng: referral.lng
+          destination:
+            lat: referee.lat
+            lng: referee.lng
+        directions = result[1]
+        minutes = Math.round(directions.duration / 60)
+        stepsString = directions.steps.join '\n'
+        message = "#{shelter.name} is a #{minutes} minute walk away. Directions:\n\n#{stepsString}"
+        referral.isReserved = true
+      else
+        message 'OK, you have not reserved your bed.'
+        referral.isReserved = false
+      handler.reply message
+      yield referral.save()
       return
 
     return handler

@@ -19,9 +19,9 @@ module.exports = (sequelize, DataTypes) ->
     paranoid: true
     associate: (models) ->
       ShelterIntent.belongsTo models.Client, 
-        as: 'Client'
+        as: 'client'
       ShelterIntent.belongsTo models.ShelterService,
-        as: 'Shelter'
+        as: 'shelter'
       return
 
   return ShelterIntent
