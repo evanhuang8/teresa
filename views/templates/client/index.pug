@@ -18,8 +18,13 @@ block content
                   |  Edit
 
           div.card-block
-            label.text-capitalize=client.stage == 'ok' ? '' : client.stage
-            h1=client.firstName+' '+client.lastName
+            label.text-capitalize
+              span Status: 
+              span=client.stage == 'ok' ? '' : client.stage
+            if client.firstName
+              h1=client.firstName+' '+client.lastName
+            else
+              h1 New Client
             h3.text-muted=client.phone
             p=client.dob
             p=client.ssn
@@ -31,11 +36,21 @@ block content
               div.col-md-7
                 h5.card-title.card-title--with-input Referrals
               div.col-md-5
-                a.btn.btn-primary.pull-right(href=`/referral/add?client=${client.id}`) New Referral
+                a.btn.btn-primary.pull-right(href=`/referral/add?client=${client.id}`)
+                  | New Referral 
+                  span.fa.fa-arrow-right
           div.card-block
             ul.list-group
               each referral in referrals
                 li.list-group-item
+                  if referral.isComplete
+                    label Completed
+                  if referral.isConfirmed
+                    label Confirmed
+                  if referral.isReserved
+                    label Reserved
+                  if referral.isCanceled
+                    label Canceled
                   p=moment(referral.createdAt).format('MM/DD')
                   if referral.service
                     p=referral.service.name

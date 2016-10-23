@@ -9,7 +9,7 @@ html(lang="en", class=isLogin ? 'bg-grad-green' : '')
   head
     title
       block title
-        | Teresa HIMS
+        | Clover • Mobilizing the path to self-sufficiency.
     meta(name="viewport", content="width=device-width, initial-scale=1, shrink-to-fit=no")
     link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i")
     link(rel="stylesheet", href=`${staticPrefix}css/vendor.css`)
@@ -40,23 +40,25 @@ html(lang="en", class=isLogin ? 'bg-grad-green' : '')
                 a(href="/analytics") St. Louis City Continuum of Care
             div.container
               div.row
-                div.col-md-1
-                  img.img-circle.header__bug(src="http://www.fillmurray.com/66/66")
-                div.col-md-11
+                div.col-md-12.pb-1
+                  img.img-circle.header__bug(src=org.image)
+                //-div.col-md-11
                   h1.header__title= org.name
                   h2.header__subtitle.text-muted= org.description
             div.navigation--subnavigation.bg-grey-lighter
               div.container
                 div.row
-                  ul.nav.nav-pills
-                    li.nav-item
-                      a.nav-link(href="/organization", class=endpoint == '/' ? 'active' : '') Overview
-                    li.nav-item
-                      a.nav-link(href="/referral/all", class=endpoint == '/referral' ? 'active' : '') Referrals
-                    li.nav-item
-                      a.nav-link(href="/service/all", class=endpoint == '/service' ? 'active' : '') Services
-                    li.nav-item
-                      a.nav-link(href="/client/list", class=endpoint == '/client' ? 'active' : '') Clients
+                  nav.navbar
+                    ul.nav.nav-pills
+                      li.nav-item
+                        a.nav-link(href="/referral/all", class=endpoint == '/referral' ? 'active' : '') Referrals
+                      li.nav-item
+                        a.nav-link(href="/service/all", class=endpoint == '/service' ? 'active' : '') Services
+                      li.nav-item
+                        a.nav-link(href="/client/list", class=endpoint == '/client' ? 'active' : '') Clients
+                    form.form-inline.float-xs-right(action='/client/list')
+                      input.form-control(type="text", name="keyword", placeholder="Search Clients")
+                      button.btn.btn-outline-success(type="submit") Search
         block content
           +l-section()
             h2 Organization Overview

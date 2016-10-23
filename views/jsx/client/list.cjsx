@@ -23,6 +23,14 @@ ClientList = React.createClass
       return
     return
 
+  clearKeyword: ->
+    @setState
+      page: 0
+      keyword: null
+    , =>
+      @fetchClients()
+    return
+
   handlePageChange: (page) ->
     @setState
       page: page
@@ -37,6 +45,24 @@ ClientList = React.createClass
 
   render: ->
     <div className="container">
+      <div className="row">
+        <div className="col-sm-10" style={paddingTop: '10px'}>
+          {
+            if @state.keyword?
+              "Searching For \'#{@state.keyword}\' - "
+          }
+          {
+            if @state.keyword?
+              <a href="javascript:;" onClick={@clearKeyword}>clear search</a>
+          }
+        </div>
+        <div className="col-sm-2">
+          <a className="btn btn-block btn-success" href="/client/add">
+            Add A Client
+          </a>
+        </div>
+        <br /><br /><br />
+      </div>
       {
         if @state.clients? and @state.clients.length > 0
           <div className="row">
@@ -62,12 +88,18 @@ ClientListItem = React.createClass
       <div className="card">
         <div className="card-block">
           <h4 className="card-title">
-            {@props.client.firstName}
             {
-              if @props.client.middleName?
-                " #{@props.client.middleName}"
+              if @props.client.firstName?
+                "#{@props.client.firstName} "
             }
-            {" #{@props.client.lastName}"}
+            {
+              if @props.client.lastName?
+                "#{@props.client.lastName} "
+            }
+            {
+              if not @props.client.firstName? and not @props.client.lastName?
+                'New Client'
+            }
           </h4>
           <h5 className="text-muted">
             {@props.client.phone}
