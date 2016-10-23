@@ -15,9 +15,10 @@ module.exports = (Model, where, order, fetchOnly) ->
   if order?
     params.order = order
 
-  objs = yield Model.findAll params
+  result = yield Model.findAndCountAll params
   if not fetchOnly
-    @request.body = 
+    @body = 
       status: 'OK'
-      objs: objs
-  return objs
+      objs: result.rows
+      total: result.count
+  return result.rows
