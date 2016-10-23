@@ -1,6 +1,6 @@
 db = require '../../db'
 Organization = db.model 'Organization'
-ShelterService = db.model 'ShelterService'
+Service = db.model 'Service'
 
 CURD = require '../../utils/curd'
 
@@ -12,7 +12,8 @@ module.exports =
     if not organization?
       @status = 400
       return
-    service = yield ShelterService.create
+    service = yield Service.create
+      type: params.type
       name: params.name
       description: params.description
       businessHours: params.businessHours
@@ -33,5 +34,5 @@ module.exports =
       'maxCapacity'
       'openCapacity'
     ]
-    yield CURD.update.call this, ShelterService, fields
+    yield CURD.update.call this, Service, fields
     return

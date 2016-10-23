@@ -22,8 +22,8 @@ models =
   Organization: importTable 'Organization'
   User: importTable 'user'
   Referral: importTable 'referral'
-  ShelterService: importTable 'shelter'
-  ShelterIntent: importTable 'intent'
+  Service: importTable 'service'
+  Intent: importTable 'intent'
 
 # Association
 for name, model of models

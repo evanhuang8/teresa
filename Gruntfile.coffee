@@ -145,7 +145,7 @@ module.exports = (grunt) ->
           ]
           bail: grunt.option('bail')?
         src: [
-          'tests/**/*.coffee'
+          'tests/*.coffee'
         ]
 
   grunt.registerTask 'compile', ['bower_concat', 'sass', 'cjsx', 'concat']
