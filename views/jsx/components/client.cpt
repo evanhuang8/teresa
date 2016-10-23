@@ -41,7 +41,8 @@ ClientForm = React.createClass
       params.id = @state.client.id
       Teresa.postJSON '/client/edit', params, (response) =>
         if response.status is 'OK'
-          console.log response
+          Teresa.alert 'Success', 'The client has been updated!'
+          window.location.href = "/client/?id=#{response.obj.id}"
         else
           console.log response
         return
@@ -50,7 +51,8 @@ ClientForm = React.createClass
       params.checkupAt = moment.tz('US/Central').add(15, 'days').toISOString()
     Teresa.postJSON '/client/create', params, (response) =>
       if response.status is 'OK'
-        console.log response
+        Teresa.alert 'Success', 'The client has been added!'
+        window.location.href = "/client/?id=#{response.obj.id}"
       else
         console.log response
       return
@@ -92,7 +94,7 @@ ClientForm = React.createClass
               </select>
             </div>
             {
-              if not @state.editing? and @state.stage is 'emergent'
+              if not @props.editing and @state.stage is 'emergent'
                 <div className="form-check">
                   <label className="form-check-label">
                     <input className="form-check-input" type="checkbox" name="shouldCheckup" /> Send Client Occasional Checkup Messages
@@ -141,7 +143,7 @@ ClientSummary = React.createClass
                 <label className="text-capitalize">{@state.client.stage}</label>
             }
             <h2>
-              {@state.client.firstName + ' ' + @state.client.middleName + ' ' + @state.client.lastName}
+              {@state.client.firstName + ' ' + @state.client.lastName}
             </h2>
             <h4>
               <span className="text-muted">

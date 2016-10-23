@@ -24,7 +24,8 @@ ReferralList = React.createClass
       referral: referral.id
     Teresa.postJSON '/referral/confirm', params, (response) =>
       if response.status is 'OK'
-        console.log response
+        Teresa.alert 'Success', 'The referral has been confirmed!'
+        @fetchReferrals()
       else
         console.log response
     return
@@ -34,16 +35,26 @@ ReferralList = React.createClass
     return
 
   render: ->
-    <div>
-      {
-        if @state.referrals? and @state.referrals.length > 0
-          @state.referrals.map (referral) =>
-            <ReferralListItem
-              referral={referral}
-              handleConfirmReferral={@handleConfirmReferral}
-            />
-      }
-    </div>
+    <table className="table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Client Name</th>
+          <th>Service Name</th>
+          <th>Referred By</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          if @state.referrals? and @state.referrals.length > 0
+            @state.referrals.map (referral) =>
+              <ReferralListItem
+                referral={referral}
+                handleConfirmReferral={@handleConfirmReferral}
+              />
+        }
+      </tbody>
+    </table>
 
 ReferralListItem = React.createClass
 
@@ -53,23 +64,23 @@ ReferralListItem = React.createClass
 
   render: ->
     referral = @props.referral
-    <div className="row">
-      <div className="col-md-2">
+    <tr>
+      <td>
         {moment.tz(referral.createdAt, 'US/Central').format('MM/DD hh:mmA')}
-      </div>
-      <div className="col-md-2">
+      </td>
+      <td>
         {referral.client.firstName} {referral.client.lastName}
-      </div>
-      <div className="col-md-3">
+      </td>
+      <td className="col-md-3">
         {
           if referral.referer?
             referral.referer.name
         }
-      </div>
-      <div className="col-md-3">
+      </td>
+      <td>
         {referral.service.name}
-      </div>
-      <div className="col-md-2 text-right">
+      </td>
+      <td>
         {
           if not referral.isConfirmed
             <a className="btn btn-sm btn-success" href="javascript:;" onClick={@props.handleConfirmReferral.bind @, referral}>Confirm</a>
@@ -79,13 +90,13 @@ ReferralListItem = React.createClass
                 if referral.isComplete
                   'Completed'
                 else
-                  'Pending'
+                  'Confirmed'
 
               }
             </div>
         }
-      </div>
-    </div>
+      </td>
+    </tr>
 
 @Teresa.referral.all = 
 
