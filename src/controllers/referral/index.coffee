@@ -51,6 +51,11 @@ createReferral = (client, body) ->
 
 module.exports = 
 
+  all: () ->
+    @render 'referral/all'
+    yield return
+    return
+
   message: () ->
     params = @request.body
     from = params.From
