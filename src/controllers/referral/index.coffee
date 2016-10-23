@@ -19,10 +19,10 @@ findOrCreateReferral = (client, body) ->
       ['createdAt', 'DESC']
     ]
   if not referral?
-    referral = yield createReferral client, body
+    referral = yield createIncomingReferral client, body
   return referral
 
-createReferral = (client, body) ->
+createIncomingReferral = (client, body) ->
   type = null
   address = null
   lat = null
@@ -88,7 +88,7 @@ module.exports =
       client = yield Client.create
         phone: from
         stage: 'unknown'
-      referral = yield createReferral client, body
+      referral = yield createIncomingReferral client, body
     if not referral?
       referral = yield findOrCreateReferral client, body
     @request.query =
