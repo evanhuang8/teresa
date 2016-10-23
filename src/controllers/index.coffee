@@ -4,7 +4,8 @@ module.exports =
     if not @passport.user?
       @redirect '/login'
       return
-    @render 'index/index'
+    @render 'index/index', 
+      user: @passport.user
     yield return
 
   login: () ->

@@ -57,6 +57,15 @@ module.exports = (grunt) ->
           'static/js/components.js': [
             'views/jsx/components/**/*.cpt'
           ]
+    concat:
+      js:
+        src: [
+          'static/js/teresa.js'
+          'static/js/**/*.js'
+          '!static/js/libraries.js'
+          '!static/js/app.js'
+        ]
+        dest: 'static/js/app.js'
     sass:
       vendor:
         options:
@@ -96,14 +105,14 @@ module.exports = (grunt) ->
         files: [
           'views/jsx/**/*.cjsx'
         ]
-        tasks: ['newer:cjsx:compile']
+        tasks: ['newer:cjsx:compile', 'concat']
       components:
         options:
           nospawn: true
         files: [
           'views/jsx/components/**/*.cpt'
         ]
-        tasks: ['cjsx:components']
+        tasks: ['cjsx:components', 'concat']
       sass_vendor:
         options:
           nospawn: true
@@ -137,7 +146,7 @@ module.exports = (grunt) ->
           'tests/**/*.coffee'
         ]
 
-  grunt.registerTask 'compile', ['bower_concat', 'sass', 'cjsx']
+  grunt.registerTask 'compile', ['bower_concat', 'sass', 'cjsx', 'concat']
   grunt.registerTask 'dev', ['compile', 'env:dev', 'concurrent:dev']
   grunt.registerTask 'test', ['env:test', 'mochaTest']
 
