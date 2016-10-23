@@ -7,6 +7,7 @@ module.exports =
   index: () ->
     @render 'user/index'
     yield return
+    return
 
   create: () ->
     email = @request.body.email
