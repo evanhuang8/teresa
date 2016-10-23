@@ -16,11 +16,9 @@ append scripts
     Teresa.referral.add.init();
 
 block content
-  div.card
-    div.card-block
-      h1.card-title Add Referral
-      div#client-summary
-  div.card
-    div.card-block
-      div#referral-list
+  +l-section()
+    h1 New Referral
+    div.row
+      div.col-md-4#rct-client-summary
+      div.col-md-8#rct-referral-list
           
