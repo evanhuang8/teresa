@@ -24,11 +24,11 @@ ServicesList = React.createClass
 
   render: ->
     <div className="card">
-      <div className="card-block">
+      <div className="card-header">
         <div className="row">
           <div className="col-sm-8">
-            <h5 className="card-title">
-              Choose A Service
+            <h5 className="card-title card-title--with-input">
+              Available Services
             </h5>
           </div>
           <div className="col-sm-4">
@@ -40,13 +40,19 @@ ServicesList = React.createClass
             </div>
           </div>
         </div>
+      </div>
+      <div className="card-block">
         {
           if @state.services? and @state.services.length > 0
-            @state.services.map (service) =>
-              <ServicesListItem
-                service={service}
-                handleChooseService={@props.handleChooseService}
-              />
+            <div className="row">
+            {
+              @state.services.map (service) =>
+                <ServicesListItem
+                  service={service}
+                  handleChooseService={@props.handleChooseService}
+                />
+            }
+            </div>
         }
       </div>
     </div>
@@ -58,17 +64,13 @@ ServicesListItem = React.createClass
     return state
 
   render: ->
-    <div className="row">
-      <div className="col-md-3">
-        {@props.service.name}
-      </div>
-      <div className="col-md-3">
-        {@props.service.description}
-      </div>
-      <div className="col-md-3">
-        {@props.service.type.charAt(0).toUpperCase() + @props.service.type.slice(1)}
-      </div>
-      <div className="col-md-3 text-right">
-        <a href="javascript:;" onClick={@props.handleChooseService.bind @, @props.service}>Select</a>
+    <div className="col-md-6">
+      <div className="card">
+        <div className="card-block">
+          <h3 className="card-title">{@props.service.name}</h3>
+          <p className="text-muted">{@props.service.description}</p>
+          <p className="tag tag-default">{@props.service.type.charAt(0).toUpperCase() + @props.service.type.slice(1)}</p>
+          <p><a className="btn btn-primary" href="javascript:;" onClick={@props.handleChooseService.bind @, @props.service}>Select Service</a></p>
+        </div>
       </div>
     </div>

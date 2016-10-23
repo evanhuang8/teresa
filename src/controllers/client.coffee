@@ -22,12 +22,6 @@ module.exports =
       user: @passport.user
     yield return
 
-  all: () ->
-    @render 'client/all', 
-      user: @passport.user
-    yield return
-    return
-
   add: () ->
     @render 'client/add', 
       user: @passport.user
