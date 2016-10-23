@@ -4,10 +4,19 @@ block vars
   - var endpoint = '/client'
 
 block content
-  +l-section('salmon')
+  +l-section()
     div.card
+      div.card-header
+        div.row
+          div.col-md-8
+            h5.card-title.card-title--with-input Information
+          div.col-md-4
+            a.btn.btn-secondary.pull-right(href=`/client/update?id=${id}`)
+              span.fa.fa-edit 
+              |  git stEdit
+
+
       div.card-block
-        h1.card-title Basic Information
         table.table
           thead
             tr
@@ -15,15 +24,16 @@ block content
               th Last Name
               th DOB
               th Phone Number
+              th SSN
           tbody
             tr
               td Eric
               td Schmidt
               td 01/01/1951
               td 555-555-5555
-        button.btn.btn-primary More Information »
+              td 555-55-5555
 
-  +l-section('aquamarine')
+  +l-section()
     div.card
       div.card-block
         h1.card-title Milestones
@@ -39,7 +49,7 @@ block content
           li.list-group-item
             p Service #1
 
-  +l-section('goldenrod')
+  +l-section()
     div.card
       div.card-block
         h1.card-title Services

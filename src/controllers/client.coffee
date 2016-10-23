@@ -13,8 +13,15 @@ CURD = require '../utils/curd'
 module.exports = 
 
   index: () ->
-    @render 'client/index', 
-      user: @passport.user
+    id =  @request.query.id
+    client = yield Client.findById id
+    if id?
+      @render 'client/index', 
+        user: @passport.user,
+        id: id
+    else
+      @render 'client/list', 
+        user: @passport.user
     yield return
 
   list: () ->
@@ -35,7 +42,8 @@ module.exports =
       @status = 404
       return
     @render 'client/edit',
-      client: client
+      client: client,
+      user: @passport.user
     yield return
     return
 
