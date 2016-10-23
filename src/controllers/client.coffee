@@ -119,6 +119,13 @@ module.exports =
 
   fetch: () ->
     keyword = @request.body.keyword
+    page = 0
+    if @request.body.page?
+      page = parseInt @request.body.page
+      if not (page > 0)
+        page = 0
+    limit = 20
+    offset = limit * page
     query = "
       SELECT `Clients`.* FROM `Clients`
     "
@@ -127,6 +134,17 @@ module.exports =
         WHERE `Clients`.`firstName` LIKE #{SqlString.escape('%' + keyword + '%')}
         OR `Clients`.`lastName` LIKE #{SqlString.escape('%' + keyword + '%')}
       "
+    query += "
+      ORDER BY `Clients`.`lastName` ASC
+    "
+    totalQuery = "SELECT Count(*) AS total FROM (#{query}) AS tq"
+    totalResults = yield db.client.query totalQuery,
+      type: sequelize.QueryTypes.SELECT
+    query += ' '
+    query += "
+      LIMIT #{limit}
+      OFFSET #{offset}
+    "
     clients = yield db.client.query query,
       type: sequelize.QueryTypes.SELECT
     @body =
