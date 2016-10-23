@@ -26,7 +26,9 @@ AnalyticsCanvas = React.createClass
       @state.orgs.map (org, i) ->
         <div key={i} className="col-md-4 col-sm-6">
           <div class="card">
-            <img class="card-img-top" src="https://www.fillmurray.com/g/200/300" />
+            <img class="card-img-top" src={org.image} style={
+              maxWidth: '100%'
+            } />
             <div class="card-block">
               <h4 class="card-title">{org.name}</h4>
               <p class="card-text">

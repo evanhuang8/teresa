@@ -46,6 +46,9 @@ co ->
       always: true
   for row, i in data
     if i > 1 # Start at row 3
+      img = null
+      if row[12]?.trim().length > 0
+        img = "https://s3.us-east-2.amazonaws.com/ghack16/logos/#{row[12]}"
       org = yield Organization.create
         name: row[0]
         description: row[0] # FIXME
@@ -53,6 +56,7 @@ co ->
         lat: row[3]
         lng: row[4]
         phone: row[2]
+        image: img
         tz: 'US/Central'
         communityId: community.id
       orgs.push org
