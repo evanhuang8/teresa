@@ -72,7 +72,7 @@ ReferralListItem = React.createClass
       <td>
         {referral.client.firstName} {referral.client.lastName}
       </td>
-      <td className="col-md-3">
+      <td>
         {
           if referral.referer?
             referral.referer.name
@@ -86,7 +86,7 @@ ReferralListItem = React.createClass
           if not referral.isConfirmed
             <a className="btn btn-sm btn-success" href="javascript:;" onClick={@props.handleConfirmReferral.bind @, referral}>Confirm</a>
           else
-            <div>
+            <span>
               {
                 if referral.isComplete
                   'Completed'
@@ -94,7 +94,7 @@ ReferralListItem = React.createClass
                   'Confirmed'
 
               }
-            </div>
+            </span>
         }
       </td>
     </tr>
