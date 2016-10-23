@@ -9,6 +9,11 @@ module.exports =
     yield return
     return
 
+  all: () ->
+    @render 'client/all'
+    yield return
+    return
+
   add: () ->
     @render 'client/add'
     yield return
