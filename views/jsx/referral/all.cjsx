@@ -34,7 +34,6 @@ ReferralList = React.createClass
     return
 
   render: ->
-    console.log @state.referrals
     <div>
       {
         if @state.referrals? and @state.referrals.length > 0
@@ -90,6 +89,14 @@ ReferralListItem = React.createClass
 
 @Teresa.referral.all = 
 
+  referralList: undefined
+
   init: () ->
-    React.render(<ReferralList />, $('div#referral-list')[0])
+
+    @referralList = React.render(<ReferralList />, $('div#referral-list')[0])
+
+    Teresa.handleNewReferral = (referral) =>
+      @referralList.fetchReferrals()
+      return
+  
     return

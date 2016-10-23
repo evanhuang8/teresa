@@ -7,6 +7,7 @@ Service = db.model 'Service'
 Referral = db.model 'Referral'
 Organization = db.model 'Organization'
 
+io = require '../../io'
 queue = require '../../tasks/queue'
 handler = require('./handler').getMessageHandler()
 
@@ -132,6 +133,7 @@ module.exports =
         refereeId: service.organizationId
         refererId: @passport.user.organizationId
         userId: @passport.user.id
+      yield io.addReferralRequest referral
     @body =
       status: 'OK'
       referral: referral
