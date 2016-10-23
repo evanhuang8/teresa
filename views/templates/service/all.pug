@@ -1,0 +1,19 @@
+extend ../layout
+
+block vars
+  - var endpoint = '/service'
+
+block content
+  +l-section()
+    div.card
+      div.card-block
+        h1.card-title Services
+        ul.list-group
+          li.list-group-item
+            button.btn.btn-success.float-xs-right Refer Client »
+            h4 Services Name
+            p
+              span.tag.tag-default tag
+              span.tag.tag-default tag
+              span.tag.tag-default tag
+              span.tag.tag-default tag
