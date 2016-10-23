@@ -203,7 +203,8 @@ module.exports =
         isCanceled: false
       order: [
         ['isConfirmed', 'ASC']
-        ['createdAt', 'ASC']
+        ['isComplete', 'ASC']
+        ['createdAt', 'DESC']
       ]
     @body =
       status: 'OK'

@@ -56,7 +56,7 @@ ReferralListItem = React.createClass
     referral = @props.referral
     <div className="row">
       <div className="col-md-2">
-        {moment.tz(referral.createdAt, 'US/Central').format('MM/DD/YYYY')}
+        {moment.tz(referral.createdAt, 'US/Central').format('MM/DD hh:mmA')}
       </div>
       <div className="col-md-2">
         {referral.client.firstName} {referral.client.lastName}
