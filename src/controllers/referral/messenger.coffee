@@ -1,5 +1,17 @@
 module.exports = 
 
+  checkup: (firstName, displayName) ->
+    insert = ''
+    if firstName?
+      insert = ' ' + firstName
+    "Hi#{insert}, this is #{displayName} checking in on you. Are you:\n\n1: Doing OK\n\n2. Worried about losing your home\n\n3. Lost your home\n\n"
+
+  well: () ->
+    'Good to hear! If you need help regarding your home, you can always text this number for help.'
+
+  parseErrorCheckup: () ->
+    'Sorry we did not get that. Are you:\n\n1: Doing OK\n\n2. Worried about losing your home\n\n3. Lost your home\n\n'
+
   menu: () ->
     'Do you need help with anything today?\n\n1: Temporary shelter\n2: Health\n3: Housing\n4: Job\n5: Food\n6: Funds\n7: Talk to someone\n\nPlease reply 1-7'
 

@@ -1,0 +1,18 @@
+extend ../layout
+
+append scripts
+  
+  if client
+    script.
+      var clientId = "#{client.id}";
+  else
+    script.
+      var clientId = null;
+
+  script.
+    Teresa.client.edit.init();
+
+block content
+  div.container
+    h1 Edit Client
+    div#client-edit

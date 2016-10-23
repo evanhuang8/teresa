@@ -18,8 +18,9 @@ importTable = (name) ->
 
 models = 
   Client: importTable 'client'
+  Checkup: importTable 'checkup'
   Community: importTable 'community'
-  Organization: importTable 'Organization'
+  Organization: importTable 'organization'
   User: importTable 'user'
   Referral: importTable 'referral'
   Service: importTable 'service'
