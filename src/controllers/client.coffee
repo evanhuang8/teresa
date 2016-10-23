@@ -39,3 +39,9 @@ module.exports =
     ]
     yield CURD.update.call this, Client, fields
     return
+
+  data: () ->
+    @body =
+      status: 'OK'
+      obj: yield Client.findById @request.body.id
+    return
