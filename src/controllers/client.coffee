@@ -8,13 +8,23 @@ CURD = require '../utils/curd'
 
 module.exports = 
 
-  add: () ->
+  index: () ->
     @render 'client/index'
     yield return
 
   list: () ->
     @render 'client/list'
     yield return
+
+  all: () ->
+    @render 'client/all'
+    yield return
+    return
+
+  add: () ->
+    @render 'client/add'
+    yield return
+    return
 
   create: () ->
     params = @request.body

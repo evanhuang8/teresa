@@ -3,3 +3,53 @@ mixin l-section(color)
     div.container
       if block
         block
+
+//- FORMS
+  +input('email', 'test', 'Email Label', 'Placeholder', false)
+  +input('password', 'test', 'Pass Label', 'Placeholder', false)
+  +input('text', 'test', 'Text Label', 'Placeholder', false)
+  +input('number', 'test', 'Number Label', 'Placeholder', false)
+
+  +input('textarea', 'test', 'Textarea Label', 'Placeholder', false)
+
+  +input('select', 'select', 'Label', 'Bloop', ['one', 'two', 'three'])
+
+  +input-check-group('Radio')
+    - var name = 'optionsRadios'
+    +input-check('radio', name, 'Radio', 'value1')
+    +input-check('radio', name, 'Radio', 'value2')
+    +input-check('radio', name, 'Radio', 'value3')
+
+  +input-check-group('Checkbox')
+    - var name = 'optionsCheckboxes'
+    +input-check('checkbox', name, 'Radio', 'value1')
+    +input-check('checkbox', name, 'Radio', 'value2')
+    +input-check('checkbox', name, 'Radio', 'value3')
+mixin input(type, id, label, placeholder, options)
+  div.form-group
+    label(for=id)=label
+    case type
+      when 'textarea'
+        textarea.form-control(id=id)
+      when 'select'
+        select.form-control(id=id)
+          if options
+            for o in options
+              option=o
+      default
+        input.form-control(type=type, id=id, placeholder=placeholder ? placeholder : label)
+
+mixin input-check-group(label)
+  fieldset.form-group
+    legend=label
+    if block
+      block
+
+mixin input-check(type, name, id, label)
+  div.form-check
+    label.form-check-label
+      input.form-check-input(type=type, name=name, id=id, value=id)
+      if label
+        | #{label}
+      else
+        | #{id}

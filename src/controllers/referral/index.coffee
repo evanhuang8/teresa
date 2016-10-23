@@ -51,6 +51,21 @@ createIncomingReferral = (client, body) ->
 
 module.exports = 
 
+  all: () ->
+    @render 'referral/all'
+    yield return
+    return
+
+  add: () ->
+    @render 'referral/add'
+    yield return
+    return
+
+  refer: () ->
+    @render 'referral/refer'
+    yield return
+    return
+
   message: () ->
     params = @request.body
     from = params.From
