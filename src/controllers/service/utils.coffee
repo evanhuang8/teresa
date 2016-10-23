@@ -4,7 +4,6 @@ sequelize = require 'sequelize'
 uid = require 'uid2'
 
 db = require '../../db'
-client = db.client
 Service = db.model 'Service'
 Intent = db.model 'Intent'
 
@@ -39,7 +38,7 @@ module.exports =
       ORDER BY distance ASC 
       LIMIT 50
     '
-    services = yield client.query query, 
+    services = yield db.client.query query, 
       type: sequelize.QueryTypes.SELECT
     if opts.isOpen
       _services = []

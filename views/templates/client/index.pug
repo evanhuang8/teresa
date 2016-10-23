@@ -37,5 +37,7 @@ block content
               each referral in referrals
                 li.list-group-item
                   p=moment(referral.createdAt).format('MM/DD')
-                  p=referral.service.name
-                  p=referral.referee.name
+                  if referral.service
+                    p=referral.service.name
+                  if referral.referee
+                    p=referral.referee.name

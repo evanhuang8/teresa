@@ -53,7 +53,6 @@ module.exports =
     @render 'client/add', 
       user: @passport.user
     yield return
-    return
 
   update: () ->
     id = @request.query.id
@@ -65,7 +64,6 @@ module.exports =
       client: client,
       user: @passport.user
     yield return
-    return
 
   create: () ->
     if not @passport.user?
