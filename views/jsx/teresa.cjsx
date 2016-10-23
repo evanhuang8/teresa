@@ -44,5 +44,27 @@
     alert message
     return
 
+  socket: undefined
+
+  initSocket: () ->
+
+    if not _orgId?
+      return
+
+    @socket = io.connect '/'
+
+    @socket.on 'connect', =>
+      console.log 'Connected with the server.'
+      @socket.emit 'join_room', 
+        orgId: _orgId
+      return
+
+    @socket.on 'new_referral', (referral) ->
+      console.log referral
+      return
+
+    return
+
   init: () ->
+    @initSocket()
     return
