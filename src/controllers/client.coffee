@@ -2,6 +2,9 @@ moment = require 'moment-timezone'
 db = require '../db'
 Client = db.model 'Client'
 Checkup = db.model 'Checkup'
+Referral = db.model 'Referral'
+Service = db.model 'Service'
+Organization = db.model 'Organization'
 
 sequelize = require 'sequelize'
 SqlString = require 'sequelize/lib/sql-string'
@@ -15,11 +18,27 @@ module.exports =
   index: () ->
     id =  @request.query.id
     client = yield Client.findById id
-    if id?
+    if client?
+      referrals = yield Referral.findAll
+        include: [
+          model: Service
+          as: 'service'
+        ,
+          model: Organization
+          as: 'referee'
+        ,
+          model: Organization
+          as: 'referer'
+        ]
+        where:
+          clientId: client.id
+        order: [
+          ['createdAt', 'DESC']
+        ]
       @render 'client/index', 
-        user: @passport.user,
-        client: client,
-        id: id
+        user: @passport.user
+        client: client
+        referrals: referrals
     else
       @render 'client/list', 
         user: @passport.user

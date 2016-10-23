@@ -13,7 +13,7 @@ block content
               div.col-md-8
                 h5.card-title.card-title--with-input Information
               div.col-md-4
-                a.btn.btn-secondary.pull-right(href=`/client/update?id=${id}`)
+                a.btn.btn-secondary.pull-right(href=`/client/update?id=${client.id}`)
                   span.fa.fa-edit 
                   |  Edit
 
@@ -31,36 +31,11 @@ block content
               div.col-md-7
                 h5.card-title.card-title--with-input Referrals
               div.col-md-5
-                a.btn.btn-primary.pull-right(href=`/referrals/add?id=${id}`) New Referral
+                a.btn.btn-primary.pull-right(href=`/referral/add?client=${client.id}`) New Referral
           div.card-block
             ul.list-group
-              li.list-group-item
-                p Service #1
-              li.list-group-item
-                p Service #1
-              li.list-group-item
-                p Service #1
-              li.list-group-item
-                p Service #1
-              li.list-group-item
-                p Service #1
-
-        div.card
-          div.card-header
-            div.row
-              div.col-md-7
-                h5.card-title.card-title--with-input Services
-              div.col-md-5
-                a.btn.btn-primary.pull-right(href=`/service/add?id=${id}`) Add Service
-          div.card-block
-            ul.list-group
-              li.list-group-item
-                p Service #1
-              li.list-group-item
-                p Service #1
-              li.list-group-item
-                p Service #1
-              li.list-group-item
-                p Service #1
-              li.list-group-item
-                p Service #1
+              each referral in referrals
+                li.list-group-item
+                  p=moment(referral.createdAt).format('MM/DD')
+                  p=referral.service.name
+                  p=referral.referee.name
