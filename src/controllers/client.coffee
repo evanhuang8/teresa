@@ -18,6 +18,7 @@ module.exports =
     if id?
       @render 'client/index', 
         user: @passport.user,
+        client: client,
         id: id
     else
       @render 'client/list', 

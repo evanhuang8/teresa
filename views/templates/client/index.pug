@@ -5,62 +5,54 @@ block vars
 
 block content
   +l-section()
-    div.card
-      div.card-header
-        div.row
-          div.col-md-8
-            h5.card-title.card-title--with-input Information
-          div.col-md-4
-            a.btn.btn-secondary.pull-right(href=`/client/update?id=${id}`)
-              span.fa.fa-edit 
-              |  git stEdit
+    div.row
+      div.col-md-4
+        div.card.mb-3
+          div.card-header
+            div.row
+              div.col-md-8
+                h5.card-title.card-title--with-input Information
+              div.col-md-4
+                a.btn.btn-secondary.pull-right(href=`/client/update?id=${id}`)
+                  span.fa.fa-edit 
+                  |  Edit
 
+          div.card-block
+            label.text-capitalize=client.stage == 'ok' ? '' : client.stage
+            h1=client.firstName+' '+client.lastName
+            h3.text-muted=client.phone
+            p=client.dob
+            p=client.ssn
+        
+      div.col-md-8
+        div.card.mb-3
+          div.card-header
+            h5.card-title.card-title--with-input Referrals
+          div.card-block
+            ul.list-group
+              li.list-group-item
+                p Service #1
+              li.list-group-item
+                p Service #1
+              li.list-group-item
+                p Service #1
+              li.list-group-item
+                p Service #1
+              li.list-group-item
+                p Service #1
 
-      div.card-block
-        table.table
-          thead
-            tr
-              th First Name
-              th Last Name
-              th DOB
-              th Phone Number
-              th SSN
-          tbody
-            tr
-              td Eric
-              td Schmidt
-              td 01/01/1951
-              td 555-555-5555
-              td 555-55-5555
-
-  +l-section()
-    div.card
-      div.card-block
-        h1.card-title Milestones
-        ul.list-group
-          li.list-group-item
-            p Service #1
-          li.list-group-item
-            p Service #1
-          li.list-group-item
-            p Service #1
-          li.list-group-item
-            p Service #1
-          li.list-group-item
-            p Service #1
-
-  +l-section()
-    div.card
-      div.card-block
-        h1.card-title Services
-        ul.list-group
-          li.list-group-item
-            p Service #1
-          li.list-group-item
-            p Service #1
-          li.list-group-item
-            p Service #1
-          li.list-group-item
-            p Service #1
-          li.list-group-item
-            p Service #1
+        div.card
+          div.card-header
+            h5.card-title.card-title--with-input Services
+          div.card-block
+            ul.list-group
+              li.list-group-item
+                p Service #1
+              li.list-group-item
+                p Service #1
+              li.list-group-item
+                p Service #1
+              li.list-group-item
+                p Service #1
+              li.list-group-item
+                p Service #1
