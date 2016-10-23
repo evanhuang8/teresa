@@ -1,11 +1,13 @@
 db = require '../../db'
 Client = db.model 'Client'
+Service = db.model 'Service'
 Referral = db.model 'Referral'
 
 MessageHandler = require('./handler').getMessageHandler()
 
 Interpreter = require '../../utils/interpreter'
 LocationUtils = require '../../utils/location'
+ServiceUtils = require '../../controllers/service/utils'
 
 INTENT_TYPES = ['shelter', 'housing', 'health', 'finances']
 
@@ -54,11 +56,56 @@ module.exports =
   all: () ->
     @render 'referral/all'
     yield return
-    return
 
   add: () ->
-    @render 'referral/add'
+    id = @request.query.client
+    client = yield Client.findById id
+    @render 'referral/add',
+      client: client
     yield return
+
+  create: () ->
+    if not @passport.user?
+      @status = 403
+    clientId = @request.body.client
+    serviceId = @request.body.service
+    if not clientId? or not serviceId?
+      @body =
+        status: 'FAIL'
+        message: 'Must include a client and a service'
+      return
+    client = yield Client.findById clientId
+    if not client?
+      @body =
+        status: 'FAIL'
+        message: 'The client does not exist'
+      return
+    service = yield Service.findById clientId
+    if not service?
+      @body =
+        status: 'FAIL'
+        message: 'The service does not exist'
+      return
+    if service.maxCapacity > 0 and service.openCapacity is 0
+      @body =
+        status: 'FAIL'
+        message: 'The service is at capacity'
+      return
+    referral = null
+    intent = yield ServiceUtils.reserve
+      client: client
+      service: service
+    if intent?
+      referral = yield Referral.create
+        isConfirmed: not service.isConfirmationRequired
+        clientId: client.id
+        serviceId: service.id
+        refereeId: service.organizationId
+        refererId: @passport.user.organizationId
+        userId: @passport.user.id
+    @body =
+      status: 'OK'
+      referral: referral
     return
 
   message: () ->

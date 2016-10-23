@@ -2,6 +2,9 @@ db = require '../../db'
 Organization = db.model 'Organization'
 Service = db.model 'Service'
 
+sequelize = require 'sequelize'
+SqlString = require 'sequelize/lib/sql-string'
+
 CURD = require '../../utils/curd'
 
 module.exports =
@@ -43,24 +46,28 @@ module.exports =
     return
 
   fetch: () ->
-
+    keyword = @request.body.keyword
+    type = @request.body.type
     query = "
-      SELECT `Services`.* FROM `Services` LEFT JOIN `Organizations`
+      SELECT `Services`.*, `Organizations`.`name` FROM `Services` LEFT JOIN `Organizations`
       ON `Services`.`organizationId` = `Organizations`.`id`
     "
-    if keyword? or category?
+    if keyword? or type?
       query += ' WHERE '
     if keyword?
       query += "
-        (`Clients`.`firstName` LIKE #{SqlString.escape('%' + keyword + '%')}
-        OR `Clients`.`lastName` LIKE #{SqlString.escape('%' + keyword + '%')})
+        (`Services`.`name` LIKE #{SqlString.escape('%' + keyword + '%')}
+        OR `Services`.`description` LIKE #{SqlString.escape('%' + keyword + '%')})
       "
-    if keyword? and category?
+    if keyword? and type?
       query += ' AND '
-    keyword = @request.body.keyword
-    clients = yield db.client.query query,
+    if type?
+      query += "
+        `Services`.`type` LIKE #{SqlString.escape('%' + type + '%')}
+      "
+    services = yield db.client.query query,
       type: sequelize.QueryTypes.SELECT
     @body =
       status: 'OK'
-      clients: clients
+      services: services
     yield return
