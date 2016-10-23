@@ -92,6 +92,11 @@ module.exports = (grunt) ->
           stdout: true
           stderr: true
         command: 'nodemon --watch src src/runner.coffee'
+      worker:
+        options:
+          stdout: true
+          stderr: true
+        command: 'nodemon --watch src src/tasks/runner.coffee'
     watch:
       reload:
         options:
@@ -131,6 +136,7 @@ module.exports = (grunt) ->
       dev:
         tasks: [
           'shell:server'
+          'shell:worker'
           'watch'
         ]
         options:
