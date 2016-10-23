@@ -5,9 +5,9 @@ html(lang="en")
       block title
         | Teresa HIMS
     meta(name="viewport", content="width=device-width, initial-scale=1, shrink-to-fit=no")
-    link(rel="stylesheet", href="#{staticPrefix}css/vendor.css")
+    link(rel="stylesheet", href=`${staticPrefix}css/vendor.css`)
     link(rel="stylesheet", href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css")
-    link(rel="stylesheet", href="#{staticPrefix}css/teresa.css")
+    link(rel="stylesheet", href=`${staticPrefix}css/teresa.css`)
   body
     block body
       div#wrapper-top
@@ -15,7 +15,8 @@ html(lang="en")
           a.navbar-brand(href="/")
             | Teresa
           div.nav.navbar-nav.pull-right
-              span.nav-item.dropdown
+            if user
+              //-span.nav-item.dropdown
                 a.nav-link.dropdown-toggle(href="#", data-toggle="dropdown")
                   span.fa.fa-gears
                   |  Analytics
@@ -32,16 +33,15 @@ html(lang="en")
               //-a.nav-item.nav-link(href="/data") 
                 span.fa.fa-tasks
                 |  Data
-      div#wrapper-middle
-        block content
-          //-
-      div#wrapper-footer
-        block footer
-          //-
+            else
+              a.nav-item.nav-link(href="/login") 
+                span.fa.fa-user
+                |  Login
+        div#wrapper-content
+          block content
     div#scripts
-      script(src="#{staticPrefix}js/libraries.js")
-      script(src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js", crossorigin="anonymous")
-      script(src="#{staticPrefix}js/teresa.js")
+      script(src=`${staticPrefix}js/libraries.js`)
+      script(src=`${staticPrefix}js/app.js`)
       block scripts
         script.
           Teresa.init()

@@ -5,7 +5,7 @@ User = db.model 'User'
 
 module.exports = 
   index: () ->
-    @render 'user/index.jade'
+    @render 'user/index'
     yield return
 
   create: () ->
