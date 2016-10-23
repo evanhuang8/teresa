@@ -4,6 +4,14 @@ block vars
   - var endpoint = '/client'
 
 append scripts
+
+  if keyword
+    script.
+      var keyword = "#{keyword}";
+  else
+    script.
+      var keyword = null;
+
   script.
     Teresa.client.list.init();
 

@@ -8,7 +8,7 @@ ClientList = React.createClass
       keyword: @props.keyword
       clients: null
       page: 0
-      total: 100
+      total: 0
     return state
 
   fetchClients: ->
@@ -19,6 +19,7 @@ ClientList = React.createClass
       if response.status is 'OK'
         @setState
           clients: response.clients
+          total: response.total
       return
     return
 

@@ -45,8 +45,10 @@ module.exports =
     yield return
 
   list: () ->
+    keyword = @request.query.keyword
     @render 'client/list', 
       user: @passport.user
+      keyword: keyword
     yield return
 
   add: () ->
@@ -150,6 +152,7 @@ module.exports =
     @body =
       status: 'OK'
       clients: clients
+      total: totalResults[0].total/limit
     yield return
 
   fetch_single: () ->
