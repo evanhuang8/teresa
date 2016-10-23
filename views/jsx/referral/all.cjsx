@@ -83,12 +83,14 @@ ReferralListItem = React.createClass
         }
         <div className="card-block">
           <h4 className="card-title">
-            {
-              if referral.client.firstName?
-                "#{referral.client.firstName} #{referral.client.lastName}"
-              else
-                'Name N/A'
-            }
+            <a  href="/client/?id=#{referral.client.id}">
+              {
+                if referral.client.firstName?
+                  "#{referral.client.firstName} #{referral.client.lastName}"
+                else
+                  'New Client'
+              }
+            </a>
           </h4>
           <h6 className="card-subtitle"><span className="text-muted">for</span> {referral.service.name}</h6>
         </div>

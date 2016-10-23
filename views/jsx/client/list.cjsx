@@ -98,7 +98,7 @@ ClientListItem = React.createClass
             }
             {
               if not @props.client.firstName? and not @props.client.lastName?
-                'Name N/A'
+                'New Client'
             }
           </h4>
           <h5 className="text-muted">

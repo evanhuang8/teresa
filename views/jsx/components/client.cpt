@@ -165,7 +165,7 @@ ClientSummary = React.createClass
                 if @state.client.firstName? and @state.client.lastName?
                   "#{@state.client.firstName} #{@state.client.lastName}"
                 else
-                  'Name N/A'
+                  'New Client'
               }
             </h2>
             <h4>
