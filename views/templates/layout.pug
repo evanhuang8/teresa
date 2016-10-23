@@ -43,6 +43,29 @@ html(lang="en")
                 span.fa.fa-user
                 |  Login
         div#wrapper-content
+          block header
+            +l-section('salmon')
+              div
+                a(href="/community") St. Louis City CoC
+            div(style="background-image:url('http://www.fillmurray.com/1024/150'); background-size:cover;")
+              div.container
+                div.row
+                  div.col-md-8
+                    h1 {Organization Name}
+                    h2 {Organization Mission}
+                  div.col-md-4.text-right
+                    img(src="http://www.fillmurray.com/150/150")
+            +l-section('aquamarine')
+              div.row
+                ul.nav.nav-pills
+                  li.nav-item
+                    a.nav-link(href="/organization") Activity
+                  li.nav-item
+                    a.nav-link(href="/referral/all") Service
+                  li.nav-item
+                    a.nav-link.active(href="/user/all") Providers
+                  li.nav-item
+                    a.nav-link(href="/client/all") Clients
           block content
     div#scripts
       if user

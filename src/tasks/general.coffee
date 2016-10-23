@@ -1,5 +1,5 @@
 Q = require 'q'
-
+moment = require 'moment-timezone'
 twilio = require 'twilio'
 _client = new twilio.RestClient process.env.T_TWILIO_SID, process.env.T_TWILIO_TOKEN
 sendSMS = Q.denodeify _client.messages.create
@@ -51,8 +51,8 @@ module.exports =
       return
     client = checkup.client
     organization = checkup.organization
-    start = moment checkup.start
-    nextCheckupAt = moment()
+    start = moment.tz checkup.start, 'US/Central'
+    nextCheckupAt = moment.tz('US/Central')
       .add 15, 'days'
       .hour start.hour()
       .minute start.minute()

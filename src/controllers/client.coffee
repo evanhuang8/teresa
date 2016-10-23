@@ -1,3 +1,4 @@
+moment = require 'moment-timezone'
 db = require '../db'
 Client = db.model 'Client'
 Checkup = db.model 'Checkup'
@@ -26,6 +27,17 @@ module.exports =
 
   add: () ->
     @render 'client/add'
+    yield return
+    return
+
+  update: () ->
+    id = @request.query.id
+    client = yield Client.findById id
+    if not client?
+      @status = 404
+      return
+    @render 'client/edit',
+      client: client
     yield return
     return
 
@@ -58,6 +70,7 @@ module.exports =
       task = yield queue.add
         name: 'general'
         params:
+          type: 'scheduleCheckup'
           id: checkup.id
         eta: start.clone()
       checkup.task = task.id
@@ -65,8 +78,7 @@ module.exports =
     @body = 
       status: 'OK'
       obj: client
-    yield
-    return
+    yield return
 
   edit: () ->
     fields = [
@@ -96,4 +108,17 @@ module.exports =
     @body =
       status: 'OK'
       clients: clients
+    yield return
+
+  fetch_single: () ->
+    id = @request.body.id
+    client = yield Client.findById id
+    if not client?
+      @body =
+        status: 'FAIL'
+        message: 'The client does not exist'
+      return
+    @body =
+      status: 'OK'
+      client: client
     yield return
