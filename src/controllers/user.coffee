@@ -4,6 +4,10 @@ db = require '../db'
 User = db.model 'User'
 
 module.exports = 
+  index: () ->
+    @render 'user/index'
+    yield return
+    return
 
   create: () ->
     email = @request.body.email
@@ -30,7 +34,7 @@ module.exports =
     @status = 201
     @body =
       status: 'OK'
-    yield
+    yield return
     return
 
   auth: () ->

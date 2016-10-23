@@ -6,7 +6,7 @@ CURD = require '../utils/curd'
 module.exports = 
 
   index: () ->
-    yield
+    yield return
     return
 
   create: () ->

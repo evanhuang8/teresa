@@ -1,0 +1,32 @@
+extend ../layout
+
++input(type, id, label, placeholder, options)
+  div.form-group
+    label(for=id)=label
+    case type
+      when 'textarea'
+        textarea.form-control(id=id)
+      when 'select'
+        select.form-control(id=id)
+          for o in options
+            option o
+      when 'radio'
+        div.form-check
+          if block
+            block
+      when 'check'
+        div.form-check
+          if block
+            block
+      default
+        input.form-control(type=type, id=id, placeholder=placeholder)
+
++input-check(type, name, id, label)
+  label.form-check-label
+    input.form-check-input(type=type, name=name, id=id)
+      if block
+        block
+
+block content
+  form
+    +input('textarea', 'test', 'Textarea Label', 'Placeholder')

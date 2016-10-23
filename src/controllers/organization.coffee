@@ -7,7 +7,8 @@ CURD = require '../utils/curd'
 module.exports = 
 
   index: () ->
-    yield
+    @render 'organization/index'
+    yield return
     return
 
   create: () ->
@@ -28,7 +29,7 @@ module.exports =
     @body = 
       status: 'OK'
       obj: organization
-    yield
+    yield return
     return
 
   edit: () ->

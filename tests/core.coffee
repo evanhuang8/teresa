@@ -252,6 +252,39 @@ describe 'Teresa', ->
         gb.client = client
         return
 
+      it '#fetch', ->
+        # First Name Search
+        params = 
+          keyword: 'Mar'
+        res = yield authedRequest
+          .post '/client/fetch/'
+          .send params
+          .expect 200
+          .end()
+        res.body.status.should.equal 'OK'
+        res.body.clients.length.should.equal 1
+        # Last Name Search
+        params = 
+          keyword: 'ack'
+        res = yield authedRequest
+          .post '/client/fetch/'
+          .send params
+          .expect 200
+          .end()
+        res.body.status.should.equal 'OK'
+        res.body.clients.length.should.equal 1
+        # No Results
+        params = 
+          keyword: 'Jon Bon Jovi'
+        res = yield authedRequest
+          .post '/client/fetch/'
+          .send params
+          .expect 200
+          .end()
+        res.body.status.should.equal 'OK'
+        res.body.clients.length.should.equal 0
+        return
+
   describe 'Location', ->
 
     before ->

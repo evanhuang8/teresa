@@ -1,9 +1,20 @@
 db = require '../db'
 Client = db.model 'Client'
 
+sequelize = require 'sequelize'
+SqlString = require 'sequelize/lib/sql-string'
+
 CURD = require '../utils/curd'
 
 module.exports = 
+
+  add: () ->
+    @render 'client/index'
+    yield return
+
+  list: () ->
+    @render 'client/list'
+    yield return
 
   create: () ->
     params = @request.body
@@ -40,8 +51,19 @@ module.exports =
     yield CURD.update.call this, Client, fields
     return
 
-  data: () ->
+  fetch: () ->
+    keyword = @request.body.keyword
+    query = "
+      SELECT `Clients`.* FROM `Clients`
+    "
+    if keyword?
+      query += "
+        WHERE `Clients`.`firstName` LIKE #{SqlString.escape('%' + keyword + '%')}
+        OR `Clients`.`lastName` LIKE #{SqlString.escape('%' + keyword + '%')}
+      "
+    clients = yield db.client.query query,
+      type: sequelize.QueryTypes.SELECT
     @body =
       status: 'OK'
-      obj: yield Client.findById @request.body.id
-    return
+      clients: clients
+    yield return
