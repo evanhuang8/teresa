@@ -3,6 +3,7 @@
 fs = require 'fs'
 
 _ = require 'lodash'
+moment = require 'moment-timezone'
 co = require 'co'
 faker = require 'faker'
 csv = require 'csv'
@@ -110,12 +111,16 @@ co ->
   initials = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'I', 'Z']
   stages = ['unknown', 'emergent', 'homeless', 'rehab']
   for i in [0..2000]
+    delta = _.sample [30..90]
+    createdAt = new Date moment().subtract(delta, 'days').valueOf()
     clients.push
       firstName: faker.name.firstName()
       middleName: initials[i % initials.length]
       lastName: faker.name.lastName()
       phone: faker.phone.phoneNumberFormat()
       stage: _.sample stages
+      createdAt: createdAt
+
   yield Client.bulkCreate clients
 
   clients = yield Client.findAll {}
@@ -124,12 +129,18 @@ co ->
       for type in types
         if Math.random() > 0.5
           service = _.sample servicesByTypes[type]
+          isComplete = _.sample [true, false]
+          completedAt = null
+          if isComplete
+            delta = _.sample [1..11]
+            completedAt = new Date moment().subtract(delta, 'days').valueOf()
           referral = yield Referral.create
             isInitialized: true
             type: type
             isConfirmed: true
             isDirectionSent: _.sample [true, false]
-            isComplete: _.sample [true, false]
+            isComplete: isComplete
+            completedAt: completedAt
             clientId: client.id
             serviceId: service.id
             refereeId: service.organizationId
@@ -139,12 +150,15 @@ co ->
       for type in types
         if type is 'housing' or Math.random() > 0.7
           service = _.sample servicesByTypes[type]
+          delta = _.sample [1..11]
+          completedAt = new Date moment().subtract(delta, 'days').valueOf()
           referral = yield Referral.create
             isInitialized: true
             type: type
             isConfirmed: true
             isDirectionSent: _.sample [true, false]
             isComplete: true
+            completedAt: completedAt
             clientId: client.id
             serviceId: service.id
             referee: service.organizationId
