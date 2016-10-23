@@ -62,6 +62,9 @@ seekService = (referral) ->
           console.log err.stack
           true
     if intent
+      if intent isnt true
+        intent.referralId = referral.id
+        yield intent.save()
       referral.serviceId = service.id
       referral.refereeId = service.organizationId
       message = messenger.referral service, directions, intent isnt true

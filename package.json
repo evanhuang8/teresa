@@ -21,6 +21,7 @@
   "homepage": "https://github.com/evanhuang8/teresa#readme",
   "dependencies": {
     "bcrypt": "0.8.x",
+    "bull": "1.0.x",
     "co": "4.5.x",
     "co-request": "1.0.x",
     "koa": "1.2.x",
