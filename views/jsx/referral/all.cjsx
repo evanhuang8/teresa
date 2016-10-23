@@ -24,7 +24,8 @@ ReferralList = React.createClass
       referral: referral.id
     Teresa.postJSON '/referral/confirm', params, (response) =>
       if response.status is 'OK'
-        console.log response
+        Teresa.alert 'Success', 'The referral has been confirmed!'
+        @fetchReferrals()
       else
         console.log response
     return

@@ -13,7 +13,7 @@ block content
               div.col-md-8
                 h5.card-title.card-title--with-input Information
               div.col-md-4
-                a.btn.btn-secondary.pull-right(href=`/client/update?id=${id}`)
+                a.btn.btn-secondary.pull-right(href=`/client/update?id=${client.id}`)
                   span.fa.fa-edit 
                   |  Edit
 
@@ -30,29 +30,8 @@ block content
             h5.card-title.card-title--with-input Referrals
           div.card-block
             ul.list-group
-              li.list-group-item
-                p Service #1
-              li.list-group-item
-                p Service #1
-              li.list-group-item
-                p Service #1
-              li.list-group-item
-                p Service #1
-              li.list-group-item
-                p Service #1
-
-        div.card
-          div.card-header
-            h5.card-title.card-title--with-input Services
-          div.card-block
-            ul.list-group
-              li.list-group-item
-                p Service #1
-              li.list-group-item
-                p Service #1
-              li.list-group-item
-                p Service #1
-              li.list-group-item
-                p Service #1
-              li.list-group-item
-                p Service #1
+              each referral in referrals
+                li.list-group-item
+                  p=moment(referral.createdAt).format('MM/DD')
+                  p=referral.service.name
+                  p=referral.referee.name
