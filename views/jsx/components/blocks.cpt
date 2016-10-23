@@ -1,0 +1,108 @@
+UIPagination = React.createClass
+
+  getInitialState: ->
+    state =
+      page: 0
+    return state
+
+  switchPage: (event) ->
+    val = $(event.target).attr 'data-page'
+    page = parseInt val
+    if page isnt @state.page
+      @setState
+        page: page
+      , () ->
+        @props.onPageChange? page
+        return
+    return
+
+  nextPage: ->
+    page = @state.page
+    page++
+    if page >= @props.total
+      page = @props.total - 1
+    @setState
+      page: page
+    , () ->
+      @props.onPageChange? page
+      return
+    return
+
+  prevPage: ->
+    page = @state.page
+    page--
+    if page < 0
+      page = 0
+    @setState
+      page: page
+    , () ->
+      @props.onPageChange? page
+      return
+    return
+
+  render: ->
+    cx = classNames
+    frameClass = cx
+      'hidden': @props.total <= 1
+    prevClass = cx
+      'page-item': true
+      'prev-page': true
+      disabled: @state.page is 0
+    nextClass = cx
+      'page-item': true
+      'next-page': true
+      disabled: @state.page is @props.total - 1 or @props.total is 0
+    <nav className={frameClass}>
+      <ul className="pagination">
+        <li className={prevClass}>
+          <a className="page-link" href="javascript:;" onClick={@prevPage} data-page="-1">
+            <span className="fa fa-angle-double-left" />
+          </a>
+        </li>
+        {
+          total = if @props.total is 0 then 1 else @props.total
+          [1..total].map (i) =>
+            if i in [1, @props.total, @state.page + 1, @state.page, @state.page + 2]
+              pageClass = cx
+                active: @state.page is i - 1
+                'page-item': true
+              <li key={i} className={pageClass}>
+                <a href="javascript:;" className="page-link" onClick={@switchPage} data-page={i-1}>{i}</a>
+              </li>
+            else
+              if i is @state.page - 1 and i isnt 1
+                <li key={i} className="disabled page-item">
+                  <a className="page-link" href="javascript:;">...</a>
+                </li>
+              else
+                if i is @state.page + 3 and i isnt @props.total
+                  <li key={i} className="disabled page-item">
+                    <a className="page-link" href="javascript:;">...</a>
+                  </li>
+        }
+        <li className={nextClass}>
+          <a className="page-link" href="javascript:;" onClick={@nextPage} data-page="+1">
+            <span className="fa fa-angle-double-right" />
+          </a>
+        </li>
+      </ul>
+      {
+        if @props.helpText?
+          <p className="help-text">
+            {@props.helpText}
+          </p>
+      }
+    </nav>
+
+UIPaginationResults = React.createClass
+
+  render: ->
+    start = 0
+    end = 0
+    if @props.total > 0
+      start = @props.limit * @props.page + 1
+      end = @props.limit * (@props.page + 1)
+      end = Math.min end, @props.total
+    <p>
+      Showing <b>{start}</b>-<b>{end}</b> of <b>{@props.total}</b> Total {@props.noun or 'Result(s)'}
+    </p>

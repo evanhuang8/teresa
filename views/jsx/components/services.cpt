@@ -18,6 +18,23 @@ ServicesList = React.createClass
       return
     return
 
+  updateKeyword: ->
+    keyword = $(@refs.keyword.getDOMNode()).val()
+    @setState
+      keyword: keyword
+    , =>
+      @fetchServices()
+      return
+    return
+
+  clearKeyword: ->
+    @setState
+      keyword: null
+    , =>
+      @fetchServices()
+      return
+    return
+
   componentDidMount: ->
     @fetchServices()
     return
@@ -29,13 +46,21 @@ ServicesList = React.createClass
           <div className="col-sm-8">
             <h5 className="card-title card-title--with-input">
               Available Services
+              {
+                if @state.keyword?
+                  " - \'#{@state.keyword}\' "
+              }
+              {
+                if @state.keyword?
+                  <a href="javascript:;" onClick={@clearKeyword}>reset search</a>
+              }
             </h5>
           </div>
           <div className="col-sm-4">
             <div className="input-group">
-              <input type="text" className="form-control" placeholder="Search for..." />
+              <input type="text" className="form-control" placeholder="Search for..." ref="keyword" name="keyword" />
               <span className="input-group-btn">
-                <button className="btn btn-secondary" type="button">Go!</button>
+                <button className="btn btn-secondary" type="button" onClick={@updateKeyword}>Go!</button>
               </span>
             </div>
           </div>
@@ -64,13 +89,20 @@ ServicesListItem = React.createClass
     return state
 
   render: ->
+    tagClass = switch @props.service.type
+      when 'shelter' then 'tag-primary'
+      when 'housing' then 'tag-success'
+      when 'food' then 'tag-warning'
+      when 'job' then 'tag-info'
+      when 'health' then 'tag-danger'
+      else 'tag-default'
     <div className="col-md-6">
       <div className="card">
         <div className="card-block">
           <h3 className="card-title">{@props.service.name}</h3>
           <p className="text-muted">{@props.service.description}</p>
-          <p className="tag tag-default">{@props.service.type.charAt(0).toUpperCase() + @props.service.type.slice(1)}</p>
-          <p><a className="btn btn-primary" href="javascript:;" onClick={@props.handleChooseService.bind @, @props.service}>Select Service</a></p>
+          <p className="tag #{tagClass}">{@props.service.type.charAt(0).toUpperCase() + @props.service.type.slice(1)}</p>
+          <p><a className="btn btn-primary" href="javascript:;" onClick={@props.handleChooseService.bind @, @props.service}>Make Referral</a></p>
         </div>
       </div>
     </div>

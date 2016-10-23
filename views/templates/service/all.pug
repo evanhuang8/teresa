@@ -9,11 +9,13 @@ block content
       div.card-block
         h1.card-title Services
         ul.list-group
-          li.list-group-item
-            button.btn.btn-success.float-xs-right Refer Client »
-            h4 Services Name
-            p
-              span.tag.tag-default tag
-              span.tag.tag-default tag
-              span.tag.tag-default tag
-              span.tag.tag-default tag
+          each service in services
+            li.list-group-item
+              h4=service.name
+              p=service.description
+              if service.maxCapacity == 0
+                p Unlimited Capacity
+              else
+                p Available Capacity: #{service.openCapacity}/#{service.maxCapacity}
+              p
+                span.tag.tag-default=service.type
