@@ -128,20 +128,34 @@ ClientSummary = React.createClass
 
   render: ->
     <div className="card">
-      <div className="card-block">
-        <h5 className="card-title">
-          Summary of Client
+      <div className="card-header">
+        <h5 className="card-title card-title--with-input">
+          Patient Summary
         </h5>
-        {
-          if @state.client?
-            <div className="row">
-              <div className="col-md-3">
-                {@state.client.firstName} {@state.client.lastName}
-              </div>
-              <div className="col-md-3">
-                {@state.client.stage}
-              </div>
-            </div>
-        }
       </div>
+      {
+        if @state.client?
+          <div className="card-block">
+            {
+              if @state.client.stage? and @state.client.stage isnt 'ok'
+                <label className="text-capitalize">{@state.client.stage}</label>
+            }
+            <h2>
+              {@state.client.firstName + ' ' + @state.client.middleName + ' ' + @state.client.lastName}
+            </h2>
+            <h4>
+              <span className="text-muted">
+                {@state.client.phone}
+              </span>
+            </h4>
+            {
+              if @state.client.dob?
+                <p><span className="text-capitalize">{@state.client.dob}</span></p> 
+            }
+            {
+              if @state.client.ssn?
+                <p><span className="text-capitalize">{@state.client.ssn}</span></p>
+            }
+          </div>
+      }
     </div>

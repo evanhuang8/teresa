@@ -1,5 +1,8 @@
 extend ../layout
 
+block vars
+  - var endpoint = '/client'
+
 append scripts
   
   if client
@@ -13,6 +16,6 @@ append scripts
     Teresa.client.edit.init();
 
 block content
-  div.container
+  +l-section()
     h1 Edit Client
     div#client-edit

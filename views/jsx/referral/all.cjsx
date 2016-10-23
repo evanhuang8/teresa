@@ -34,7 +34,6 @@ ReferralList = React.createClass
     return
 
   render: ->
-    console.log @state.referrals
     <div>
       {
         if @state.referrals? and @state.referrals.length > 0
@@ -56,7 +55,7 @@ ReferralListItem = React.createClass
     referral = @props.referral
     <div className="row">
       <div className="col-md-2">
-        {moment.tz(referral.createdAt, 'US/Central').format('MM/DD/YYYY')}
+        {moment.tz(referral.createdAt, 'US/Central').format('MM/DD hh:mmA')}
       </div>
       <div className="col-md-2">
         {referral.client.firstName} {referral.client.lastName}
@@ -90,6 +89,14 @@ ReferralListItem = React.createClass
 
 @Teresa.referral.all = 
 
+  referralList: undefined
+
   init: () ->
-    React.render(<ReferralList />, $('div#referral-list')[0])
+
+    @referralList = React.render(<ReferralList />, $('div#referral-list')[0])
+
+    Teresa.handleNewReferral = (referral) =>
+      @referralList.fetchReferrals()
+      return
+  
     return
