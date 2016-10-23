@@ -59,13 +59,10 @@ module.exports = class TaskWorker
     if @redisPass?
       params.opts =
         auth_pass: @redisPass
-    @queue = new Queue 'epxq',
+    @queue = new Queue 'tsaq',
       redis: params
     @queue.on 'error', (err) ->
-      logger.error
-        category: 'queue'
-        class: 'process'
-        err: err
+      console.log err.stack
       return
     # Synchronize with database
     yield db.client.sync()
@@ -77,24 +74,12 @@ module.exports = class TaskWorker
         if @monitor?
           @monitor.close()
       catch err
-        logger.error
-          category: 'queue'
-          class: 'process'
-          err: err
-        , 'Monitor cannot be closed!'
+        console.log err.stack
       @queue.close().then () ->
-        logger.info
-          category: 'queue'
-          class: 'process'
-        , 'Worker is terminated.'
         process.exit 0
         return
       .catch (err) ->
-        logger.error
-          category: 'queue'
-          class: 'process'
-          err: err
-        , 'Worker cannot be terminated!'
+        console.log err.stack
         process.exit 1
         return
       return
@@ -107,10 +92,7 @@ module.exports = class TaskWorker
           db: @redisDBNumber
           auth_pass: @redisPass
       @monitor.listen @port, () =>
-        logger.info
-          category: 'queue'
-          class: 'process'
-        , 'Queue monitor is now up and running.'
+        console.log 'Queue monitor is now up and running...'
         return
     return
 
@@ -122,13 +104,13 @@ module.exports = class TaskWorker
       if not processor?
         err = new Error 'Invalid job category:', job.data._category
         if @logging
-          console.log err.stack
+          console.log err
         done err
         return
       if not processor[job.data.type]? or typeof processor[job.data.type] isnt 'function'
         err = new Error "Invalid job not processed: #{job.data.type}"
         if @logging
-          console.log err.stack
+          console.log err
         done err
         return
       # Setup hooks for detailed logging
@@ -144,7 +126,7 @@ module.exports = class TaskWorker
         return
       .catch (err) =>
         if @logging
-          console.log err.stack
+          console.log err
         return done err
       return
     return

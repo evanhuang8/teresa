@@ -7,7 +7,7 @@ module.exports =
     'Sorry we did not get that. The options are:\n\n1: Temporary shelter\n2: Health\n3: Housing\n4: Job\n5: Food\n6: Funds\n7: Talk to someone'
 
   connection: () ->
-    'OK. You will receive a call in the next few minutes to connect you with the appropiate personnel. Thanks!'
+    'OK. You will receive a call in the next few seconds to connect you with the appropiate personnel. Thanks!'
 
   address: () ->
     'Where are you right now? Please reply with a street address or an intersection (ex: Main Street and North Ave)'
