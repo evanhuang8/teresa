@@ -14,3 +14,8 @@ module.exports =
       return
     @render 'index/login'
     yield return
+
+  logout: () ->
+    @logout()
+    @redirect '/login'
+    yield return
