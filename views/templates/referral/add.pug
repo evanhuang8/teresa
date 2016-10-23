@@ -6,5 +6,5 @@ block content
       h1.card-title Add New Service
       form
         +input('text', 'referralOptionA', 'Service Name', false)
-        +input('select', 'referralOptionA', 'Service Name', ['Food', 'Shelter', 'Housing', 'Medical', 'Training', 'Funding'])
+        +input('select', 'referralOptionA', 'Service Name', false, ['Food', 'Shelter', 'Housing', 'Medical', 'Training', 'Funding'])
         button.btn.btn-primary(type="submit") Create Referral
