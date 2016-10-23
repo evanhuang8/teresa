@@ -4,7 +4,12 @@ Service = db.model 'Service'
 
 CURD = require '../../utils/curd'
 
-module.exports = 
+module.exports =
+
+  add: () ->
+    @render 'referral/add'
+    yield return
+    return
 
   create: () ->
     params = @request.body
@@ -36,3 +41,26 @@ module.exports =
     ]
     yield CURD.update.call this, Service, fields
     return
+
+  fetch: () ->
+
+    query = "
+      SELECT `Services`.* FROM `Services` LEFT JOIN `Organizations`
+      ON `Services`.`organizationId` = `Organizations`.`id`
+    "
+    if keyword? or category?
+      query += ' WHERE '
+    if keyword?
+      query += "
+        (`Clients`.`firstName` LIKE #{SqlString.escape('%' + keyword + '%')}
+        OR `Clients`.`lastName` LIKE #{SqlString.escape('%' + keyword + '%')})
+      "
+    if keyword? and category?
+      query += ' AND '
+    keyword = @request.body.keyword
+    clients = yield db.client.query query,
+      type: sequelize.QueryTypes.SELECT
+    @body =
+      status: 'OK'
+      clients: clients
+    yield return
