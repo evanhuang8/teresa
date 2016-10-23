@@ -18,6 +18,7 @@ LocalStrategy = require 'passport-local'
 
 urls = require './urls'
 db = require './db'
+queue = require './tasks/queue'
 
 User = db.model 'User'
 
@@ -33,6 +34,7 @@ module.exports = class Teresa
   init: () ->
 
     yield db.client.sync()
+    queue.init()
 
     @app = koa()
     if 1 isnt parseInt process.env.T_TEST

@@ -2,6 +2,8 @@
 Referral handler factory
 ###
 
+moment = require 'moment'
+
 db = require '../../db'
 Client = db.model 'Client'
 Organization = db.model 'Organization'
@@ -9,11 +11,15 @@ Referral = db.model 'Referral'
 Service = db.model 'Service'
 Intent = db.model 'Intent'
 
+queue = require '../../tasks/queue'
+
 MessageHandler = require '../../handlers/message'
 messenger = require './messenger'
 
 LocationUtils = require '../../utils/location'
 ServiceUtils = require '../../controllers/service/utils'
+
+T_ROOT = process.env.T_ROOT
 
 SERVICE_TYPES = [
   'shelter'
@@ -78,6 +84,13 @@ seekService = (referral) ->
   return message
 
 makeConnection = (referral) ->
+  task = yield queue.add
+    name: 'general'
+    params:
+      type: 'makeCall'
+      to: referral.client.phone
+      url: "#{T_ROOT}/referral/connect_call/"
+    eta: moment().add 5, 'seconds'
   yield return
 
 module.exports = 

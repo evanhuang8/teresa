@@ -24,13 +24,18 @@ module.exports = (grunt) ->
     pkg: grunt.file.readJSON 'package.json'
     env:
       options:
+        T_ROOT: 'http://www.cloverhims.com'
         GOOGLE_API_KEY: credentials.GOOGLE_API_KEY
         WIT_AI_ID: credentials.WIT_AI_ID
         WIT_AI_TOKEN: credentials.WIT_AI_TOKEN
       dev:
+        T_TWILIO_SID: credentials.T_TWILIO_SID
+        T_TWILIO_TOKEN: credentials.T_TWILIO_TOKEN
+        T_FROM_NUMBER: '+13142070452'
         T_TEST: 0
       test:
         T_TEST: 1
+        T_FROM_NUMBER: '+15555555555'
     coffee:
       compile:
         files: [
@@ -92,6 +97,11 @@ module.exports = (grunt) ->
           stdout: true
           stderr: true
         command: 'nodemon --watch src src/runner.coffee'
+      worker:
+        options:
+          stdout: true
+          stderr: true
+        command: 'nodemon --watch src src/tasks/runner.coffee'
     watch:
       reload:
         options:
@@ -131,6 +141,7 @@ module.exports = (grunt) ->
       dev:
         tasks: [
           'shell:server'
+          'shell:worker'
           'watch'
         ]
         options:
