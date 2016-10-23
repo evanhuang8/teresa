@@ -24,13 +24,23 @@ ClientList = React.createClass
     return
 
   render: ->
-    <div>
+    <div className="container">
       {
         if @state.clients? and @state.clients.length > 0
-          @state.clients.map (client) ->
-            <ClientListItem
-              client={client}
-            />
+          <div className="row">
+            {
+              @state.clients.sort (a, b) ->
+                if a.lastName < b.lastName
+                  return -1
+                if a.lastName > b.lastName
+                  return 1
+                return 0
+              @state.clients.map (client) ->
+                <ClientListItem
+                  client={client}
+                />
+            }
+          </div>
       }
     </div>
 
@@ -41,28 +51,28 @@ ClientListItem = React.createClass
     return state
 
   render: ->
-    <div>
-      <h1>All Clients</h1>
-    </div>
-    <ul className="list-group">
-      <li className="list-group-item">
-        <div className="row">
-          <div className="col-md-6">
+    <div className="col-md-6">
+      <div className="card">
+        <div className="card-block">
+          <h4 className="card-title">
             {@props.client.firstName}
             {
               if @props.client.middleName?
-                " #{@props.client.middleName}."
+                " #{@props.client.middleName}"
             }
             {" #{@props.client.lastName}"}
-          </div>
-          <div className="col-md-6 text-right">
-            <a className="btn btn-sm btn-secondary" href="/client/?id=#{@props.client.id}">View Details</a>
-            <a className="btn btn-sm btn-secondary" href="/client/update?id=#{@props.client.id}"> Edit</a>
-            <a className="btn btn-sm btn-success" href="/referral/add?client=#{@props.client.id}"> Refer</a>
-          </div>
+          </h4>
+          <h5 className="text-muted">
+            {@props.client.phone}
+          </h5>
         </div>
-      </li>
-    </ul>
+        <div className="card-footer">
+          <a className="card-link" href="/client/?id=#{@props.client.id}">View Details</a>
+          <a className="card-link" href="/client/update?id=#{@props.client.id}"> Edit</a>
+          <a className="btn btn-sm btn-primary pull-right" href="/referral/add?client=#{@props.client.id}">Refer <span className="fa fa-arrow-right"></span></a>
+        </div>
+      </div>
+    </div>
 
 @Teresa.client.list = 
 
