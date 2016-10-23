@@ -7,15 +7,26 @@ ClientList = React.createClass
     state =
       keyword: @props.keyword
       clients: null
+      page: 0
+      total: 100
     return state
 
   fetchClients: ->
     params =
       keyword: @state.keyword
+      page: @state.page
     Teresa.postJSON '/client/fetch', params, (response) =>
       if response.status is 'OK'
         @setState
           clients: response.clients
+      return
+    return
+
+  handlePageChange: (page) ->
+    @setState
+      page: page
+    , () =>
+      @fetchClients()
       return
     return
 
@@ -29,12 +40,6 @@ ClientList = React.createClass
         if @state.clients? and @state.clients.length > 0
           <div className="row">
             {
-              @state.clients.sort (a, b) ->
-                if a.lastName < b.lastName
-                  return -1
-                if a.lastName > b.lastName
-                  return 1
-                return 0
               @state.clients.map (client) ->
                 <ClientListItem
                   client={client}
@@ -42,6 +47,7 @@ ClientList = React.createClass
             }
           </div>
       }
+      <UIPagination total={@state.total} onPageChange={@handlePageChange} />
     </div>
 
 ClientListItem = React.createClass
