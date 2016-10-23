@@ -6,6 +6,7 @@ CURD = require '../utils/curd'
 module.exports = 
 
   index: () ->
+    @render 'community/index'
     yield return
     return
 
