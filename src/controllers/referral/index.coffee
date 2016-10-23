@@ -100,7 +100,7 @@ module.exports =
         status: 'FAIL'
         message: 'The client does not exist'
       return
-    service = yield Service.findById clientId
+    service = yield Service.findById serviceId
     if not service?
       @body =
         status: 'FAIL'

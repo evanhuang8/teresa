@@ -77,3 +77,16 @@ module.exports =
       status: 'OK'
       clients: clients
     yield return
+
+  fetch_single: () ->
+    id = @request.body.id
+    client = yield Client.findById id
+    if not client?
+      @body =
+        status: 'FAIL'
+        message: 'The client does not exist'
+      return
+    @body =
+      status: 'OK'
+      client: client
+    yield return

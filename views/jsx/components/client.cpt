@@ -1,0 +1,41 @@
+ClientSummary = React.createClass
+
+  getInitialState: ->
+    state = {}
+    return state
+
+  componentDidMount: ->
+    @fetchClient()
+    return
+
+  fetchClient: ->
+    params =
+      id: @props.clientId
+    Teresa.postJSON '/client/fetch_single', params, (response) =>
+      if response.status is 'OK'
+        @setState
+          client: response.client
+      else
+        console.log response
+      return
+    return
+
+  render: ->
+    <div className="card">
+      <div className="card-block">
+        <h5 className="card-title">
+          Summary of Client
+        </h5>
+        {
+          if @state.client?
+            <div className="row">
+              <div className="col-md-3">
+                {@state.client.firstName} {@state.client.lastName}
+              </div>
+              <div className="col-md-3">
+                {@state.client.stage}
+              </div>
+            </div>
+        }
+      </div>
+    </div>
