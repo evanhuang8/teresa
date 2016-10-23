@@ -23,6 +23,7 @@ queue = require './tasks/queue'
 io = require './io'
 
 User = db.model 'User'
+Organization = db.model 'Organization'
 
 module.exports = class Teresa
 
@@ -94,6 +95,14 @@ module.exports = class Teresa
         moment: require 'moment-timezone'
       ]
       app: @app
+
+    @app.use (next) ->
+      if @passport.user?.organizationId?
+        user = @passport.user
+        org = yield Organization.findById user.organizationId
+        user.organization = org
+      yield next
+      return
 
     router = urls()
     @app.use router.routes()
