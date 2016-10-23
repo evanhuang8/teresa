@@ -73,13 +73,13 @@ ReferralListItem = React.createClass
         {referral.client.firstName} {referral.client.lastName}
       </td>
       <td>
+        {referral.service.name}
+      </td>
+      <td>
         {
           if referral.referer?
             referral.referer.name
         }
-      </td>
-      <td>
-        {referral.service.name}
       </td>
       <td>
         {
