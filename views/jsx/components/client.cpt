@@ -143,7 +143,7 @@ ClientSummary = React.createClass
                 <label className="text-capitalize">{@state.client.stage}</label>
             }
             <h2>
-              {@state.client.firstName + ' ' + @state.client.middleName + ' ' + @state.client.lastName}
+              {@state.client.firstName + ' ' + @state.client.lastName}
             </h2>
             <h4>
               <span className="text-muted">

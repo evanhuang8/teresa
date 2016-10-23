@@ -27,7 +27,11 @@ block content
       div.col-md-8
         div.card.mb-3
           div.card-header
-            h5.card-title.card-title--with-input Referrals
+            div.row
+              div.col-md-7
+                h5.card-title.card-title--with-input Referrals
+              div.col-md-5
+                a.btn.btn-primary.pull-right(href=`/referral/add?client=${client.id}`) New Referral
           div.card-block
             ul.list-group
               each referral in referrals

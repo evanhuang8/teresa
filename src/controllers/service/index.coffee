@@ -1,6 +1,7 @@
 db = require '../../db'
 Organization = db.model 'Organization'
 Service = db.model 'Service'
+Client = db.model 'Client'
 
 sequelize = require 'sequelize'
 SqlString = require 'sequelize/lib/sql-string'
@@ -15,7 +16,11 @@ module.exports =
     yield return
 
   add: () ->
-    @render 'referral/add'
+    id = @request.query.id
+    client = yield Client.findById id
+    @render 'service/add',
+      client: client,
+      user: @passport.user
     yield return
     return
 
